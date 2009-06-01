@@ -3,11 +3,10 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 1.0
+Version: 1.1
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 
-Nouse revision: 2139
 Icon CC-BY-NC-SA: http://www.flickr.com/photos/64892304@N00/2073251155
 
 The plugin has a number of "hooks" which are called when a new liveblogging
@@ -36,9 +35,6 @@ dt (a string containing the time of this particular update).
 
 Hooks receive this as an array as its first argument. The only two hooks at the
 moment are Twitter and Meteor. Meteor is kind of the point.
-
-Comments are hooked when published and also sent on their own channel. Meteor
-subscribes to those channels and updates comments too.
 
 */
 
@@ -319,7 +315,7 @@ function liveblog_edit_entry($eid, $new, $hour, $min, $origdt)
 /* Add a [liveblog] short code */
 function liveblog_shortcode($atts, $id)
 {
-    liveblog_static($id);
+    return liveblog_static($id);
 }
 
 add_shortcode('liveblog', 'liveblog_shortcode');
@@ -349,26 +345,24 @@ function liveblog_static($id)
     // Load push code if liveblog is currently active
     if (liveblog_is_active($id) && strlen(get_option('liveblogging_meteor_controller')) > 0)
     {
-
-?>
-<script type="text/javascript" src="http://<?php echo get_option('liveblogging_meteor_host'); ?>/meteor.js"></script>
-<script type="text/javascript" src="<?php echo plugins_url(); ?>/liveblogging/liveblog.js"></script>
+        $output = '
+<script type="text/javascript" src="http://' . get_option('liveblogging_meteor_host') . '/meteor.js"></script>
+<script type="text/javascript" src="' . plugins_url() . '/live-blogging/liveblog.js"></script>
 <script type="text/javascript">
 <!--
     // Configure Meteor
-    Meteor.hostid = '<?php echo $liveblog_client_id; ?>';
-    Meteor.host = "<?php echo get_option('liveblogging_meteor_host'); ?>";
+    Meteor.hostid = "' . $liveblog_client_id . '";
+    Meteor.host = "' . get_option('liveblogging_meteor_host') . '";
     Meteor.registerEventCallback("process", liveblog_handle_event);
     Meteor.registerEventCallback("statuschanged", liveblog_handle_statechange);
-    Meteor.joinChannel('<?php echo get_option('liveblogging_id') . '-liveblog-' . $id; ?>', 2);
-    Meteor.joinChannel('<?php echo get_option('liveblogging_id') . '-comments-' . $post->ID; ?>', 2);
-    Meteor.mode = 'stream';
+    Meteor.joinChannel("' . get_option('liveblogging_id') . '-liveblog-' . $id . '", 2);
+    Meteor.joinChannel("' . get_option('liveblogging_id') . '-comments-' . $post->ID . '", 2);
+    Meteor.mode = "stream";
     jQuery(document).ready(function() {
         Meteor.connect();
     });
 -->
-</script>
-<?php
+</script>';
     }
     $query = $wpdb->prepare("SELECT `entryid`,`post`,`dt` FROM `{$table_prefix}liveblog_entries` WHERE `lbid`=%d ORDER BY `dt` DESC", $id);
     $entries = $wpdb->get_results($query);
@@ -376,28 +370,18 @@ function liveblog_static($id)
     {
         remove_filter('the_content', 'sociable_display_hook');
     }
-?>
-<div id="liveblog-status"></div>
-<div id="liveblog">
-<?php
+    $output .= '<div id="liveblog-status"></div><div id="liveblog">';
     foreach ($entries as $entry)
     {
         /* TODO: Improve style of this */
-?>
-    <div id="liveblog-entry-<?php echo $entry->entryid; ?>">
-        <p><strong><?php echo mysql2date('H.i', $entry->dt); ?></strong></p>
-        <?php echo apply_filters('the_content',$entry->post); ?>
-        <div style="width:620px; height:1px; background-color:#6f6f6f; margin-bottom:3px;"></div>
-    </div>
-<?php
+        $output .= '<div id="liveblog-entry-' . $entry->entryid . '"><p><strong>' . mysql2date('H.i', $entry->dt) . '</strong></p>' . apply_filters('the_content',$entry->post) . '<div style="width:620px; height:1px; background-color:#6f6f6f; margin-bottom:3px;"></div></div>';
     }
     if (function_exists('sociable_display_hook'))
     {
         add_filter('the_content', 'sociable_display_hook');
     }
-?>
-</div>
-<?php
+    $output .= '</div>';
+    return $output;
 }
 
 /* Get a specific entry */
