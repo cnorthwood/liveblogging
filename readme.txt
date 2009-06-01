@@ -3,7 +3,7 @@ Contributors: chrisnorthwood
 Tags: live, micro, JavaScript, blogging, event
 Requires at least: 2.7
 Tested up to: 2.7.1
-Stable tag: 1.0
+Stable tag: 1.1
 
 Live Blogging is a plugin to support micro blogging of live events using Comet/Push HTTP technology.
 
