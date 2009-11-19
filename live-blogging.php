@@ -334,6 +334,7 @@ function liveblog_cookie()
     {
         $liveblog_client_id = $_COOKIE['liveblog-client-id'];
     }
+    wp_enqueue_script("jquery");
 }
 
 add_action('init', 'liveblog_cookie');
