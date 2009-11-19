@@ -2,7 +2,7 @@
 Contributors: chrisnorthwood
 Tags: live, micro, JavaScript, blogging, event
 Requires at least: 2.7
-Tested up to: 2.7.1
+Tested up to: 2.8.6
 Stable tag: 1.1
 
 Live Blogging is a plugin to support micro blogging of live events using Comet/Push HTTP technology.
@@ -30,3 +30,9 @@ Now, create a live blog using the Manage Live Blogs panel and make a note of the
 Once you've finished blogging that event, go back to Manage Live Blogs to Deactivate that blog - that prevents the JavaScript for Meteor getting inserted unnecessarily.
 
 And that's it.
+
+== Changelog ==
+
+= 1.2 =
+
+Correctly require jQuery
