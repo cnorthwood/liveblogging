@@ -234,6 +234,61 @@ function liveblog_deactivate($lbid)
     $wpdb->query($query);
 }
 
+/* Adjust hour back to GMT from Wordpress timezone setting
+ * @param string $hour The hour to override the time to, or "blank" to use now
+ * @return The value of $hour, adjusted to GMT
+ */
+function liveblog_fixhour($hour)
+{
+    $gmt_offset = get_option('gmt_offset');
+    $gmt_offset_hours = $gmt_offset < 0 ? ceil($gmt_offset) : floor($gmt_offset);
+    $fullhour = intval($gmt_offset) == floatval($gmt_offset);
+
+    if ($hour === "blank")
+    {
+        return $hour;
+    }
+
+    $hour = ((int) $hour) - $gmt_offset_hours;
+
+    if ($hour < 0)
+    {
+        $hour += 24;
+    }
+    elseif ($hour >= 24)
+    {
+        $hour -= 24;
+    }
+    return (string) $hour;
+}
+
+/* Adjust min back to GMT from Wordpress timezone setting
+ * @param string $min The min to override the time to, or "blank" to use now
+ * @return The value of $min, adjusted to GMT
+ */
+function liveblog_fixmin($min)
+{
+    $gmt_offset = get_option('gmt_offset');
+    $fullhour = intval($gmt_offset) == floatval($gmt_offset);
+
+    if (($min === "blank") || $fullhour)
+    {
+        return $min;
+    }
+
+    $min = ((int) $min) - 30;
+
+    if ($min < 0)
+    {
+        $min += 60;
+    }
+    elseif ($min >= 60)
+    {
+        $min -= 60;
+    }
+    return (string) $min;
+}
+
 /* Deal with edge conditions, where blog posts are set to appear a few minutes before midnight
  * @param mixed $hour The hour, set to "blank" if no override
  * @param mixed $min The minute, set to "blank" if no override
@@ -247,17 +302,52 @@ function liveblog_figure_time($hour, $min, $realdate)
         // No override specified
         return $realdate;
     }
-    elseif ($hour == 23 && date('H', $realdate) == 0)
+    elseif ($hour == 23 && gmdate('H', $realdate) == 0)
     {
         // If after midnight, but want it to appear before midnight, take an hour off the real date to set the correct date.
         $realdate -= 3600;
     }
-    elseif ($hour == 0 && date('H', $realdate) == 23)
+    elseif ($hour == 0 && gmdate('H', $realdate) == 23)
     {
         // Inverse of above. Not sure why anyone would ever want to do this, but there we go
         $realdate += 3600;
     }
-    return mktime($hour, $min, 0, date('n', $realdate), date('j', $realdate), date('Y',$realdate));
+    return mktime($hour, $min, 0,
+                  gmdate('n', $realdate),
+                  gmdate('j', $realdate),
+                  gmdate('Y',$realdate));
+}
+
+/* Same behaviour as Wordpress' date_i18n(),
+ * but using Wordpress' timezone settings, not PHP's
+ * @param string $format The format string, as used by PHP's date()
+ * @param unixtime $timestamp The timestamp 
+ * @return string String representation of the timestamp, formatted as format
+ */
+function liveblog_date($format, $timestamp = false)
+{
+    $dt = ($timestamp === false) ? time() : $timestamp;
+    return date_i18n($format, $dt + (get_option('gmt_offset') * 3600), true);
+}
+
+/* Similar to mysql2date, but prints as a GMT date string
+ * instead of printing under PHP's current timezone.
+ * @param string $dateformatstring The format string, as used by PHP's date()
+ * @param string $mysqlstring The datetime from MySQL
+ * @param bool $translate Whether or not to use date_i18n instead of gmdate
+ * @return string String representation of the mysqlstring, reformatted as format
+ */
+function liveblog_mysql2date($dateformatstring, $mysqlstring, $translate = true)
+{
+    $i = strtotime($mysqlstring);
+    if ($translate)
+    {
+        return date_i18n($dateformatstring, $i, true);
+    }
+    else
+    {
+        return gmdate($dateformatstring, $i);
+    }
 }
 
 /* Add a new liveblog entry
@@ -271,6 +361,8 @@ function liveblog_figure_time($hour, $min, $realdate)
 function liveblog_add_entry($lbid, $entry, $hour, $min)
 {
     global $wpdb, $table_prefix, $current_user;
+    $hour = liveblog_fixhour($hour);
+    $min = liveblog_fixmin($min);
     $dt = liveblog_figure_time($hour, $min, time());
     $query = $wpdb->prepare("INSERT INTO `{$table_prefix}liveblog_entries` (`lbid`,`post`,`dt`,`author`) VALUES( %d, %s, FROM_UNIXTIME(%d), %d) ", $lbid, $entry, $dt, $current_user->ID);
     $wpdb->query($query);
@@ -279,7 +371,7 @@ function liveblog_add_entry($lbid, $entry, $hour, $min)
     {
         remove_filter('the_content', 'sociable_display_hook');
     }
-    do_action('liveblog_add_entry', array('lbid' => $lbid, 'entryid' => $wpdb->insert_id, 'dt' => date('H.i', $dt), 'entry' => apply_filters('the_content',$entry)));
+    do_action('liveblog_add_entry', array('lbid' => $lbid, 'entryid' => $wpdb->insert_id, 'dt' => liveblog_date('H.i', $dt), 'entry' => apply_filters('the_content',$entry)));
     if (function_exists('sociable_display_hook'))
     {
         add_filter('the_content', 'sociable_display_hook');
@@ -298,14 +390,14 @@ function liveblog_edit_entry($eid, $new, $hour, $min, $origdt)
 {
     global $wpdb, $table_prefix;
     $dt = liveblog_figure_time($hour, $min, $origdt);
-    $query = $wpdb->prepare("UPDATE `{$table_prefix}liveblog_entries` SET `post`=%s, `dt`=FROM_UNIXTIME(%d) WHERE `entryid`=%d", $new, $dt, $eid);
+    $query = $wpdb->prepare("UPDATE `{$table_prefix}liveblog_entries` SET `post`=%s, `dt`=%s WHERE `entryid`=%d", $new, gmdate('Y-m-d H:i:s', $dt), $eid);
     $wpdb->query($query);
     $query = $wpdb->prepare("SELECT lbid FROM `{$table_prefix}liveblog_entries` WHERE `entryid`=%d", $eid);
     if (function_exists('sociable_display_hook'))
     {
         remove_filter('the_content', 'sociable_display_hook');
     }
-    do_action('liveblog_edit_entry', array('lbid' => $wpdb->get_var($query), 'entryid' => $eid, 'dt' => date('H.i', $dt), 'entry' => apply_filters('the_content',$new)));
+    do_action('liveblog_edit_entry', array('lbid' => $wpdb->get_var($query), 'entryid' => $eid, 'dt' => date_i18n('H.i', $dt, true), 'entry' => apply_filters('the_content',$new)));
     if (function_exists('sociable_display_hook'))
     {
         add_filter('the_content', 'sociable_display_hook');
@@ -334,7 +426,6 @@ function liveblog_cookie()
     {
         $liveblog_client_id = $_COOKIE['liveblog-client-id'];
     }
-    wp_enqueue_script("jquery");
 }
 
 add_action('init', 'liveblog_cookie');
@@ -375,7 +466,7 @@ function liveblog_static($id)
     foreach ($entries as $entry)
     {
         /* TODO: Improve style of this */
-        $output .= '<div id="liveblog-entry-' . $entry->entryid . '"><p><strong>' . mysql2date('H.i', $entry->dt) . '</strong></p>' . apply_filters('the_content',$entry->post) . '<div style="width:620px; height:1px; background-color:#6f6f6f; margin-bottom:3px;"></div></div>';
+        $output .= '<div id="liveblog-entry-' . $entry->entryid . '"><p><strong>' . liveblog_mysql2date('H.i', $entry->dt) . '</strong></p>' . apply_filters('the_content',$entry->post) . '<div style="width:620px; height:1px; background-color:#6f6f6f; margin-bottom:3px;"></div></div>';
     }
     if (function_exists('sociable_display_hook'))
     {

@@ -20,9 +20,9 @@ if (!current_user_can('edit_others_posts'))
         <p>Change the time this entry was posted at:</p>
 <?php
         $dt = liveblog_time($_POST['eid-to-edit']);
-        liveblog_dt_selects(mysql2date('H', $dt), mysql2date('i', $dt));
+        liveblog_dt_selects(liveblog_mysql2date('H', $dt), liveblog_mysql2date('i', $dt));
 ?>
-        <input type="hidden" name="dt" value="<?php echo mysql2date('U', $dt); ?>" />
+        <input type="hidden" name="dt" value="<?php echo strtotime($dt); ?>" />
         <input type="submit" name="save" id="save-post" value="Post" tabindex="4" class="button button-highlighted" />
     </form>
 <?php
