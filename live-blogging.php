@@ -14,8 +14,6 @@ Icon CC-BY-NC-SA: http://www.flickr.com/photos/64892304@N00/2073251155
  TODO:
  
  New posting to Twitter functionality
- Meta box for posts to allow them to activated as live blogs
- Meta box for entries to use custom taxonomy to allow them to be associated
  New hooks for push to Meteor/push to Twitter stuff
  Migration of old content
  Showing Live blogging beneath a post
@@ -77,7 +75,11 @@ add_action('admin_init', 'live_blogging_register_settings');
 function live_blogging_add_menu()
 {
     add_submenu_page('options-general.php', __('Live Blogging Options', 'live-blogging'), __('Live Blogging Options', 'live-blogging'), 'manage_options', 'live-blogging-options', 'live_blogging_options');
+    add_meta_box('live_blogging_post_enable', __('Enable Live Blog', 'live-blogging'), 'live_blogging_post_meta', 'post', 'side');
+    add_meta_box('live_blogging_post_select', __('Select Live Blog', 'live-blogging'), 'live_blogging_entry_meta', 'liveblog_entry', 'side');
 }
+
+add_action('admin_menu', 'live_blogging_add_menu');
 
 function live_blogging_options()
 {
@@ -128,4 +130,156 @@ function live_blogging_options()
 <?php
 }
 
-add_action('admin_menu', 'live_blogging_add_menu');
+function live_blogging_post_meta()
+{
+    global $post;
+    wp_nonce_field('live_blogging_post_meta', 'live_blogging_post_nonce');
+    $checked = '';
+    if (get_post_meta($post->ID, '_liveblog', true) == '1')
+    {
+        $checked = ' checked="checked"';
+    }
+?>
+
+  <label for="live_blogging_post_enable"><?php _e('Enable live blogging on this post', 'live-blogging' ); ?></label>
+  <input type="checkbox" name="live_blogging_post_enable" value="enabled"<?php echo $checked; ?> />
+<?php
+}
+
+function live_blogging_entry_meta()
+{
+    global $post;
+    wp_nonce_field('live_blogging_entry_meta', 'live_blogging_entry_nonce');
+    $lblogs = array();
+    $q = new WP_Query(array(
+            'meta_key' => '_liveblog',
+            'meta_value' => '1',
+            'post_type' => 'post',
+            'posts_per_page' => -1
+          ));
+    
+    // Get all active live blogs
+    while ($q->have_posts())
+    {
+        $q->next_post();
+        $lblogs[$q->post->ID] = esc_html($q->post->post_title);
+    }
+    
+    // Add the current live blog, always
+    $active_id = 0;
+    $b = wp_get_object_terms(array($post->ID), 'liveblog');
+    if (count($b) > 0)
+    {
+        $b = $b[0]->name;
+        $lblogs[intval($b)] = get_the_title(intval($b));
+        $active_id = intval($b);
+    }
+    
+    // Error if there are no live blogs
+    if (count($lblogs) == 0)
+    {
+        wp_die('<p>' . __('There are no currently active live blogs.', 'live-blogging') . '</p>');
+    }
+?>
+
+  <label for="live_blogging_entry_post"><?php _e('Select live blog', 'live-blogging' ); ?></label><br/>
+  <select name="live_blogging_entry_post">
+    <?php foreach ($lblogs as $lbid => $lbname) { ?>
+        <option value="<?php echo $lbid; ?>"><?php echo $lbname; ?></option>
+    <?php } ?>
+  </select>
+<?php
+}
+
+function live_blogging_save_post_meta($post_id)
+{
+    // Check for autosaves
+    if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) ||
+        !isset($_POST['live_blogging_post_nonce']))
+    {
+        return $post_id;
+    }
+    
+    // Verify nonce
+    check_admin_referer('live_blogging_post_meta', 'live_blogging_post_nonce');
+    
+    // Verify permissions
+    if (!current_user_can('edit_post', $post_id))
+    {
+        return $post_id;
+    }
+    
+    if (isset($_POST['live_blogging_post_enable']) && 'enabled' == $_POST['live_blogging_post_enable'])
+    {
+        update_post_meta($post_id, '_liveblog', '1');
+    }
+    else
+    {
+        update_post_meta($post_id, '_liveblog', '0');
+    }
+}
+function live_blogging_save_entry_meta($post_id)
+{
+    // Check for autosaves
+    if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) ||
+        !isset($_POST['live_blogging_entry_nonce']))
+    {
+        return $post_id;
+    }
+    
+    // Verify nonce
+    check_admin_referer('live_blogging_entry_meta', 'live_blogging_entry_nonce');
+    
+    // Verify permissions
+    if (!current_user_can('edit_post', $post_id))
+    {
+        return $post_id;
+    }
+    
+    if (!isset($_POST['live_blogging_entry_post']))
+    {
+        wp_die('<p>' . __('There are no currently active live blogs.', 'live-blogging') . '</p>');
+    }
+    
+    wp_set_post_terms($post_id, $_POST['live_blogging_entry_post'], 'liveblog');
+}
+
+add_action('save_post', 'live_blogging_save_post_meta');
+add_action('save_post', 'live_blogging_save_entry_meta');
+
+function live_blogging_fix_title($title, $id)
+{
+    $post = get_post($id);
+    if ('liveblog_entry' == $post->post_type)
+    {
+        $title = apply_filters('get_the_excerpt', $post->post_excerpt);
+    }
+    return $title;
+}
+
+add_filter('the_title', 'live_blogging_fix_title', 10, 2);
+
+function live_blogging_custom_column($column_name, $post_ID)
+{
+    switch ($column_name)
+    {
+        case 'liveblog':
+            $blogs = wp_get_object_terms(array($post_ID), 'liveblog');
+            if (count($blogs) > 0)
+            {
+                $blog = $blogs[0]->name;
+                echo get_the_title(intval($blog));
+            }
+            break;
+    }
+}
+
+add_action('manage_posts_custom_column', 'live_blogging_custom_column', 10, 2);
+
+function live_blogging_add_custom_column($columns)
+{
+    $columns['liveblog'] = __('Live Blog', 'live-blogging');
+    return $columns;
+}
+
+add_filter('manage_liveblog_entry_posts_columns', 'live_blogging_add_custom_column');
