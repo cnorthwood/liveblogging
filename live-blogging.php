@@ -6,21 +6,47 @@ Description: Plugin to support automatic live blogging
 Version: 2.0
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
+*/
 
-Icon CC-BY-NC-SA: http://www.flickr.com/photos/64892304@N00/2073251155
+/*
+    Live Blogging for WordPress
+    Copyright (C) 2010 Chris Northwood <chris@pling.org.uk>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 /*
  TODO:
  
- New posting to Twitter functionality
- New hooks for push to Meteor/push to Twitter stuff
+ New hooks for push to Meteor
  Migration of old content
  New JavaScript/PHP for polling and pushing
  New documentation
+ - How to use
+   * style format
+   * date format
+   * unhooks
+ - FAQ: ensure liveblog tag is there/disabling liveblog just means disabling
+        auto-updating
+ - FAQ: migration
+ - What is Meteor/when to use it
  RSS feed functionality
- Allow disabling share this, sociable, etc, functionality in the front-end
+ Custom comment display callback
 */
+
+include('twitteroauth/twitteroauth.php');
 
 //
 // BACK END
@@ -66,12 +92,14 @@ add_action('admin_init', 'live_blogging_register_settings');
 function live_blogging_register_settings()
 {
     register_setting('live-blogging', 'liveblogging_method', 'live_blogging_sanitise_method');
+    register_setting('live-blogging', 'liveblogging_enable_twitter');
     register_setting('live-blogging', 'liveblogging_date_style');
     register_setting('live-blogging', 'liveblogging_style');
     register_setting('live-blogging', 'liveblogging_meteor_host');
     register_setting('live-blogging', 'liveblogging_meteor_controller');
     register_setting('live-blogging', 'liveblogging_meteor_controller_port', 'intval');
     register_setting('live-blogging', 'liveblogging_id');
+    register_setting('live-blogging', 'liveblogging_unhooks');
 }
 
 function live_blogging_sanitise_method($input)
@@ -104,6 +132,10 @@ function live_blogging_activate()
     if (false === get_option('liveblogging_date'))
     {
         add_option('liveblogging_date_style', 'H.i');
+    }
+    if (false === get_option('liveblogging_unhooks'))
+    {
+        add_option('liveblogging_unhooks', array('sociable_display_hook'));
     }
 }
 
@@ -144,13 +176,46 @@ function live_blogging_options()
         </tr>
         
         <tr valign="top">
+            <th scope="row"><?php _e('Connect with Twitter', 'live-blogging'); ?></th>
+            <td><?php
+                if (false !== get_option('liveblogging_twitter_token'))
+                {
+                    _e('You are already connected to Twitter. Click the image below to change the account you are connected to.', 'live-blogging');
+                    echo '<br/>';
+                }
+                else
+                {
+                    _e('You are not yet connected to Twitter. Click the image below to connect.', 'live-blogging');
+                    echo '<br/>';
+                }
+                $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET);
+                $request_token = $connection->getRequestToken(plugins_url('twittercallback.php', __FILE__));
+                update_option('liveblogging_twitter_request_token', $request_token['oauth_token']);
+                update_option('liveblogging_twitter_request_secret', $request_token['oauth_token_secret']);
+                if (200 == $connection->http_code) {
+                ?>
+                    <a href="<?php echo $connection->getAuthorizeURL($request_token['oauth_token']); ?>"><img src="<?php echo plugins_url('twitteroauth/signin.png', __FILE__); ?>" alt="Sign In with Twitter" /></a>
+                <?php } else { 
+                    _e('Unable to connect to Twitter at this time.', 'live-blogging');
+                } ?>
+            </td>
+        </tr>
+        
+<?php if (false !== get_option('liveblogging_twitter_token')) { ?>
+        <tr valign="top">
+            <th scope="row"><label for="liveblogging_enable_twitter"><?php _e('Enable posting to Twitter', 'live-blogging'); ?></label></th>
+            <td><input type="checkbox" name="liveblogging_enable_twitter" value="1"<?php if ('1' == get_option('liveblogging_enable_twitter')) { ?> checked="checked"<?php } ?> /></td>
+        </tr>
+<?php } ?>
+        
+        <tr valign="top">
             <th scope="row"><label for="liveblogging_date_style"><?php _e('Date specifier for live blog entries (see <a href="http://uk3.php.net/manual/en/function.date.php">PHP\'s date function</a> for allowable strings)', 'live-blogging'); ?></label></th>
             <td><input type="text" name="liveblogging_date_style" value="<?php echo esc_attr(get_option('liveblogging_date_style')); ?>" /></td>
         </tr>
         
         <tr valign="top">
             <th scope="row"><label for="liveblogging_style"><?php _e('Style for live blogging entries ($DATE gets replaced with the entry date/time, in the format specified above, $CONTENT with the body of the entry and $AUTHOR with the name of that author)', 'live-blogging'); ?></label></th>
-            <td><textarea name="liveblogging_style"><?php echo esc_html(get_option('liveblogging_style')); ?></textarea></td>
+            <td><textarea name="liveblogging_style" cols="60" rows="8"><?php echo esc_html(get_option('liveblogging_style')); ?></textarea></td>
         </tr>
         
         <tr valign="top">
@@ -171,6 +236,48 @@ function live_blogging_options()
         <tr valign="top">
             <th scope="row"><label for="liveblogging_id"><?php _e('Meteor Identifier (a unique string to identify this WordPress install - can be left blank if not using Meteor)', 'live-blogging'); ?></label></th>
             <td><input type="text" name="liveblogging_id" value="<?php echo esc_attr(get_option('liveblogging_id')); ?>" /></td>
+        </tr>
+        
+        <tr valign="top">
+            <th scope="row"><label for="liveblogging_unhooks"><?php _e('Actions to be unhooked when displaying live blog content (advanced feature that can be used to work around badly coded plugins that mangle individual live blog entries in undesirable ways, e.g., some bookmarking plugins)', 'live-blogging'); ?></label></th>
+            <td>
+            <?php
+                $i = 1;
+                foreach (get_option('liveblogging_unhooks') as $unhook)
+                {
+?>
+                <div id="liveblogging_unhook_<?php echo $i; ?>">
+                    <input type="text" name="liveblogging_unhooks[]" value="<?php echo esc_attr($unhook); ?>" />
+                    <input type="button" id="liveblogging_unhook_delete_<?php echo $i; ?>" title="<?php _e('Delete Unhook', 'live-blogging'); ?>" style="width:16px;height:16px;background:url('<?php echo plugins_url('delete.png', __FILE__) ?>');cursor:pointer;border:0;padding:0;margin:0;" />
+                    <script type="text/javascript">
+                    /*<![CDATA[ */
+                        jQuery('#liveblogging_unhook_delete_<?php echo $i; ?>').click(function () {
+                            jQuery('#liveblogging_unhook_<?php echo $i; ?>').remove()
+                        });
+                    /*]]>*/
+                    </script>
+                </div><br/>
+<?php
+                    $i++;
+                }
+            ?>
+                <input type="button" id="liveblogging_unhook_add" title="<?php _e('Add Unhook', 'live-blogging'); ?>" style="width:16px;height:16px;background:url('<?php echo plugins_url('add.png', __FILE__) ?>');cursor:pointer;border:0;padding:0;margin:0;" />
+                <script type="text/javascript">
+                /*<![CDATA[ */
+                    var unhook_i = <?php echo $i; ?>;
+                    jQuery('#liveblogging_unhook_add').click(function () {
+                        jQuery('<div id="liveblogging_unhook_' + unhook_i + '"> \
+                                <input type="text" name="liveblogging_unhooks[]"  /> \
+                                <input type="button" id="liveblogging_unhook_delete_' + unhook_i + '" title="<?php _e('Delete Unhook', 'live-blogging'); ?>" style="width:16px;height:16px;background:url(\'<?php echo plugins_url('delete.png', __FILE__) ?>\');cursor:pointer;border:0;padding:0;margin:0;" /> \
+                                </div>').insertBefore('#liveblogging_unhook_add');
+                        jQuery('#liveblogging_unhook_delete_' + unhook_i).click(function () {
+                            jQuery(this.parentNode).remove()
+                        });
+                        unhook_i++;
+                    });
+                /*]]>*/
+                </script>
+            </td>
         </tr>
         
     </table>
@@ -393,7 +500,23 @@ function live_blogging_get_entry($entry)
 {
     $style = get_option('liveblogging_style');
     $style = preg_replace('/\$DATE/', get_the_time(get_option('liveblogging_date_style'), $entry), $style);
+    // Remove content hooks
+    foreach (get_option('liveblogging_unhooks') as $unhook)
+    {
+        if function_exists($unhook)
+        {
+            remove_filter('the_content', $unhook);
+        }
+    }
     $style = preg_replace('/\$CONTENT/', apply_filters('the_content', $entry->post_content), $style);
+    // Add content back in hooks
+    foreach (get_option('liveblogging_unhooks') as $unhook)
+    {
+        if function_exists($unhook)
+        {
+            add_filter('the_content', $unhook);
+        }
+    }
     $user = get_userdata($entry->post_author);
     $style = preg_replace('/\$AUTHOR/', apply_filters('the_author', $user->display_name), $style);
     return $style;
@@ -448,3 +571,24 @@ function live_blogging_cookie()
 //
 // TWITTER SUPPORT
 //
+
+define('LIVE_BLOGGING_TWITTER_CONSUMER_KEY', 'ToetcXqpSlUG8rObbnxwyA');
+define('LIVE_BLOGGING_TWITTER_CONSUMER_SECRET', 'JnkDixVMDuTA103zPQSRs9eWLzy1Lgv2E97h1q2GC4');
+
+add_action('publish_liveblog_entry', 'live_blogging_tweet', 10, 2);
+function live_blogging_tweet($id, $post)
+{
+    if ('1' == get_option('liveblogging_enable_twitter') && '' == get_post_meta($id, '_liveblogging_tweeted', single))
+    {
+        $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
+        if (strlen($post->post_content) > 140)
+        {
+            $connection->post('statuses/update', array('status' => substr($post->post_content, 0, 139) . '…'));
+        }
+        else
+        {
+            $connection->post('statuses/update', array('status' => $post->post_content));
+        }
+    }
+    update_post_meta($id, '_liveblogging_tweeted', 'done');
+}
