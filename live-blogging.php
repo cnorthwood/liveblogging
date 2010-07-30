@@ -30,9 +30,15 @@ Author URI: http://www.pling.org.uk/
 /*
  TODO:
  
- New hooks for push to Meteor
  Migration of old content
  New JavaScript/PHP for polling and pushing
+ * Hook to send to Meteor on delete
+ * Hook to send comments to Meteor on creation/edit/delete with proper nesting
+ * poll.php to provide JSON to calling AJAX
+ * JavaScript to correctly handly 4 events: entry (possibly a replacement),
+                                            remove_entry
+                                            comment
+                                            remove_comment
  New documentation
  - How to use
    * style format
@@ -45,8 +51,6 @@ Author URI: http://www.pling.org.uk/
  RSS feed functionality
  Custom comment display callback
 */
-
-include('twitteroauth/twitteroauth.php');
 
 //
 // BACK END
@@ -84,6 +88,12 @@ function live_blogging_init()
                        ));
     
     load_plugin_textdomain( 'live-blogging', false, dirname(plugin_basename( __FILE__ )) . '/lang/' );
+    
+    wp_enqueue_script('live-blogging', plugins_url('live-blogging.js', __FILE__), array('jquery'));
+    if ('meteor' == get_option('liveblogging_method'))
+    {
+        wp_enqueue_script('meteor', 'http://' . get_option('liveblogging_meteor_host') . '/meteor.js');
+    }
     
 }
 
@@ -503,7 +513,7 @@ function live_blogging_get_entry($entry)
     // Remove content hooks
     foreach (get_option('liveblogging_unhooks') as $unhook)
     {
-        if function_exists($unhook)
+        if (function_exists($unhook))
         {
             remove_filter('the_content', $unhook);
         }
@@ -512,7 +522,7 @@ function live_blogging_get_entry($entry)
     // Add content back in hooks
     foreach (get_option('liveblogging_unhooks') as $unhook)
     {
-        if function_exists($unhook)
+        if (function_exists($unhook))
         {
             add_filter('the_content', $unhook);
         }
@@ -525,17 +535,36 @@ function live_blogging_get_entry($entry)
 // Insert the live blog in a post
 function live_blogging_shortcode($atts, $id = null)
 {
-    global $post;
+    global $post, $liveblog_client_id;
     $s = '';
+    if ('meteor' == get_option('liveblogging_method'))
+    {
+        $s .= '<script type="text/javascript">
+               /*<![CDATA[ */
+                // Configure Meteor
+                Meteor.hostid = "' . $liveblog_client_id . '";
+                Meteor.host = "' . get_option('liveblogging_meteor_host') . '";
+                Meteor.registerEventCallback("process", live_blogging_handle_data);
+                //Meteor.registerEventCallback("statuschanged", liveblog_handle_statechange);
+                Meteor.joinChannel("' . get_option('liveblogging_id') . '-liveblog-' . $post->ID . '", 2);
+                Meteor.mode = "stream";
+                jQuery(document).ready(function() {
+                    Meteor.connect();
+                });
+               /*]]>*/
+               </script>';
+    }
     $q = new WP_Query(array(
           'post_type' => 'liveblog_entry',
           'liveblog' => $post->ID
         ));
+    $s .= '<div id="liveblog-' . $post->ID . '">';
     while ($q->have_posts())
     {
         $q->next_post();
         $s .= live_blogging_get_entry($q->post);
     }
+    $s .= '</div>';
     return $s;
 }
 add_shortcode('liveblog', 'live_blogging_shortcode');
@@ -568,10 +597,37 @@ function live_blogging_cookie()
     }
 }
 
+add_action('publish_liveblog_entry', 'live_blogging_entry_to_meteor', 100, 2);
+function live_blogging_entry_to_meteor($id, $post)
+{
+    if ('meteor' == get_option('liveblogging_method'))
+    {
+        $fd = fsockopen(get_option('liveblogging_meteor_controller'), get_option('liveblogging_meteor_controller_port'));
+        $liveblogs = wp_get_object_terms(array($id), 'liveblog');
+        if (isset($_POST['live_blogging_entry_post']))
+        {
+            $liveblogs[] = (object)array('name' => $_POST['live_blogging_entry_post']);
+        }
+        foreach ($liveblogs as $liveblog)
+        {
+            $e = array(
+                'liveblog' => $liveblog->name,
+                'id' => $id,
+                'type' => 'entry',
+                'html' => live_blogging_get_entry($post)
+            );
+            fwrite($fd, 'ADDMESSAGE ' . get_option('liveblogging_id') . '-liveblog-' . $liveblog->name . ' ' . addslashes(json_encode($e)) . "\n");
+        }
+        fwrite($fd, "QUIT\n");
+        fclose($fd);
+    }
+}
+
 //
 // TWITTER SUPPORT
 //
 
+include('twitteroauth/twitteroauth.php');
 define('LIVE_BLOGGING_TWITTER_CONSUMER_KEY', 'ToetcXqpSlUG8rObbnxwyA');
 define('LIVE_BLOGGING_TWITTER_CONSUMER_SECRET', 'JnkDixVMDuTA103zPQSRs9eWLzy1Lgv2E97h1q2GC4');
 
