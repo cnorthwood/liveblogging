@@ -32,13 +32,15 @@ Author URI: http://www.pling.org.uk/
  
  Migration of old content
  New JavaScript/PHP for polling and pushing
- * Hook to send to Meteor on delete
  * Hook to send comments to Meteor on creation/edit/delete with proper nesting
- * poll.php to provide JSON to calling AJAX
- * JavaScript to correctly handly 4 events: entry (possibly a replacement),
-                                            remove_entry
-                                            comment
+ * AJAX call to create notifications for 4 events: delete_entry (perhaps meta data on the parent post of IDs to consider deleted - undo when it gets untrashed)
+                                                   comment
+                                                   delete_comment
+ * Meteor to send notifications for 4 events: comment
+                                              remove_comment
+ * JavaScript to correctly handle 4 events: comment
                                             remove_comment
+ * Twitter to handle delete_entry
  New documentation
  - How to use
    * style format
@@ -47,9 +49,15 @@ Author URI: http://www.pling.org.uk/
  - FAQ: ensure liveblog tag is there/disabling liveblog just means disabling
         auto-updating
  - FAQ: migration
+ - FAQ: Editing posts does/can not edit Twitter
+ - Known Issue: Setting posts to appear at a point back in time will not appear
+                in the correct place when auto updating
  - What is Meteor/when to use it
  RSS feed functionality
  Custom comment display callback
+ 
+ For version 3.1:
+ * @replying to a tweet from a live blog leaves a comment on that live blog
 */
 
 //
@@ -89,10 +97,20 @@ function live_blogging_init()
     
     load_plugin_textdomain( 'live-blogging', false, dirname(plugin_basename( __FILE__ )) . '/lang/' );
     
-    wp_enqueue_script('live-blogging', plugins_url('live-blogging.js', __FILE__), array('jquery'));
+    if ('disabled' != get_option('liveblogging_method'))
+    {
+        wp_enqueue_script('live-blogging', plugins_url('live-blogging.js', __FILE__), array('jquery', 'json2'));
+    }
+    
     if ('meteor' == get_option('liveblogging_method'))
     {
         wp_enqueue_script('meteor', 'http://' . get_option('liveblogging_meteor_host') . '/meteor.js');
+    }
+    elseif ('poll' == get_option('liveblogging_method'))
+    {
+        wp_localize_script('live-blogging', 'live_blogging', array('ajaxurl' => addslashes(admin_url('admin-ajax.php'))));
+        add_action('wp_ajax_live_blogging_poll', 'live_blogging_ajax');
+        add_action('wp_ajax_nopriv_live_blogging_poll', 'live_blogging_ajax');
     }
     
 }
@@ -118,9 +136,10 @@ function live_blogging_sanitise_method($input)
     {
         case 'poll':
         case 'meteor':
+        case 'disabled':
             return $input;
         default:
-            return 'poll';
+            return 'disabled';
     }
 }
 
@@ -182,6 +201,7 @@ function live_blogging_options()
             <td><select name='liveblogging_method'>
                 <option value="poll"<?php if ('poll' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Poll (default, requires no special configuration)', 'live-blogging'); ?></option>
                 <option value="meteor"<?php if ('meteor' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Stream using Meteor (lower server load and faster updates, but needs special configuration)', 'live-blogging'); ?></option>
+                <option value="disabled"<?php if ('disabled' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Disable automatic updates', 'live-blogging'); ?></option>
             </select></td>
         </tr>
         
@@ -545,7 +565,6 @@ function live_blogging_shortcode($atts, $id = null)
                 Meteor.hostid = "' . $liveblog_client_id . '";
                 Meteor.host = "' . get_option('liveblogging_meteor_host') . '";
                 Meteor.registerEventCallback("process", live_blogging_handle_data);
-                //Meteor.registerEventCallback("statuschanged", liveblog_handle_statechange);
                 Meteor.joinChannel("' . get_option('liveblogging_id') . '-liveblog-' . $post->ID . '", 2);
                 Meteor.mode = "stream";
                 jQuery(document).ready(function() {
@@ -554,15 +573,24 @@ function live_blogging_shortcode($atts, $id = null)
                /*]]>*/
                </script>';
     }
+    elseif ('poll' == get_option('liveblogging_method'))
+    {
+        $s .= '<script type="text/javascript">
+               /*<![CDATA[ */
+                setTimeout(live_blogging_poll, 15000, ' . $post->ID . ')
+               /*]]>*/
+               </script>';
+    }
     $q = new WP_Query(array(
           'post_type' => 'liveblog_entry',
-          'liveblog' => $post->ID
+          'liveblog' => $post->ID,
+          'posts_per_page' => -1
         ));
     $s .= '<div id="liveblog-' . $post->ID . '">';
     while ($q->have_posts())
     {
         $q->next_post();
-        $s .= live_blogging_get_entry($q->post);
+        $s .= '<div id="liveblog-entry-' . $q->post->ID . '">' . live_blogging_get_entry($q->post) . '</div>';
     }
     $s .= '</div>';
     return $s;
@@ -623,6 +651,32 @@ function live_blogging_entry_to_meteor($id, $post)
     }
 }
 
+add_action('delete_post', 'live_blogging_delete_to_meteor');
+add_action('trash_post', 'live_blogging_delete_to_meteor');
+function live_blogging_delete_to_meteor($id)
+{
+    if ('meteor' == get_option('liveblogging_method'))
+    {
+        $post = get_post($id);
+        if ('liveblog_entry' == $post->post_type)
+        {
+            $fd = fsockopen(get_option('liveblogging_meteor_controller'), get_option('liveblogging_meteor_controller_port'));
+            $liveblogs = wp_get_object_terms(array($id), 'liveblog');
+            foreach ($liveblogs as $liveblog)
+            {
+                $e = array(
+                    'liveblog' => $liveblog->name,
+                    'id' => $id,
+                    'type' => 'delete-entry'
+                );
+                fwrite($fd, 'ADDMESSAGE ' . get_option('liveblogging_id') . '-liveblog-' . $liveblog->name . ' ' . addslashes(json_encode($e)) . "\n");
+            }
+            fwrite($fd, "QUIT\n");
+            fclose($fd);
+        }
+    }
+}
+
 //
 // TWITTER SUPPORT
 //
@@ -647,4 +701,31 @@ function live_blogging_tweet($id, $post)
         }
     }
     update_post_meta($id, '_liveblogging_tweeted', 'done');
+}
+
+// POLLING SUPPORT
+function live_blogging_ajax()
+{
+    header('Content-Type: application/json');
+    $liveblog_id = $_POST['liveblog_id'];
+    $q = new WP_Query(array(
+          'post_type' => 'liveblog_entry',
+          'liveblog' => $liveblog_id,
+          'posts_per_page' => -1,
+          'orderby' => 'date',
+          'order' => 'ASC'
+        ));
+    $r = array();
+    while ($q->have_posts())
+    {
+        $q->next_post();
+        $r[] = array(
+                'liveblog' => $liveblog_id,
+                'id' => $q->post->ID,
+                'type' => 'entry',
+                'html' => live_blogging_get_entry($q->post)
+            );
+    }
+    echo json_encode($r);
+    die();
 }
