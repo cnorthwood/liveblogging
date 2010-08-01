@@ -32,15 +32,8 @@ Author URI: http://www.pling.org.uk/
  
  Migration of old content
  New JavaScript/PHP for polling and pushing
- * Hook to send comments to Meteor on creation/edit/delete with proper nesting
- * AJAX call to create notifications for 4 events: delete_entry (perhaps meta data on the parent post of IDs to consider deleted - undo when it gets untrashed)
-                                                   comment
-                                                   delete_comment
  * Meteor to send notifications for 4 events: comment
                                               remove_comment
- * JavaScript to correctly handle 4 events: comment
-                                            remove_comment
- * Twitter to handle delete_entry
  New documentation
  - How to use
    * style format
@@ -53,8 +46,8 @@ Author URI: http://www.pling.org.uk/
  - Known Issue: Setting posts to appear at a point back in time will not appear
                 in the correct place when auto updating
  - What is Meteor/when to use it
- RSS feed functionality
- Custom comment display callback
+ - RSS feed for custom post types: WP-URL/feed/?post_type=liveblog_entry&liveblog=ID
+ - Filter for custom comment displaying
  
  For version 3.1:
  * @replying to a tweet from a live blog leaves a comment on that live blog
@@ -120,6 +113,7 @@ add_action('admin_init', 'live_blogging_register_settings');
 function live_blogging_register_settings()
 {
     register_setting('live-blogging', 'liveblogging_method', 'live_blogging_sanitise_method');
+    register_setting('live-blogging', 'liveblogging_comments');
     register_setting('live-blogging', 'liveblogging_enable_twitter');
     register_setting('live-blogging', 'liveblogging_date_style');
     register_setting('live-blogging', 'liveblogging_style');
@@ -176,7 +170,7 @@ function live_blogging_activate()
 add_action('admin_menu', 'live_blogging_add_menu');
 function live_blogging_add_menu()
 {
-    add_submenu_page('options-general.php', __('Live Blogging Options', 'live-blogging'), __('Live Blogging Options', 'live-blogging'), 'manage_options', 'live-blogging-options', 'live_blogging_options');
+    add_submenu_page('options-general.php', __('Live Blogging', 'live-blogging'), __('Live Blogging', 'live-blogging'), 'manage_options', 'live-blogging-options', 'live_blogging_options');
     if ('meteor' == get_option('liveblogging_method'))
     {
         add_submenu_page('index.php', __('Meteor Status', 'live-blogging'), __('Meteor Status', 'live-blogging'), 'manage_options', 'live-blogging-meteor-status', 'live_blogging_meteor_status');
@@ -194,16 +188,27 @@ function live_blogging_options()
 
 <form method="post" action="options.php">
     <?php settings_fields( 'live-blogging' ); ?>
+    <h3><?php _e('Automatic Updating'); ?></h3>
     <table class="form-table">
         
         <tr valign="top">
-            <th scope="row"><label for="liveblogging_method"><?php _e('Method to use for live blog reader updating', 'live-blogging'); ?></th>
+            <th scope="row"><label for="liveblogging_method"><?php _e('Method to use for live blog reader updating', 'live-blogging'); ?></label></th>
             <td><select name='liveblogging_method'>
                 <option value="poll"<?php if ('poll' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Poll (default, requires no special configuration)', 'live-blogging'); ?></option>
                 <option value="meteor"<?php if ('meteor' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Stream using Meteor (lower server load and faster updates, but needs special configuration)', 'live-blogging'); ?></option>
                 <option value="disabled"<?php if ('disabled' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Disable automatic updates', 'live-blogging'); ?></option>
             </select></td>
         </tr>
+        
+        <tr valign="top">
+            <th scope="row"><label for="liveblogging_comments"><?php _e('Enable auto-updating of comments (this will not work on some themes, please read the documentation!)', 'live-blogging'); ?></label></th>
+            <td><input type="checkbox" name="liveblogging_comments" value="1"<?php if ('1' == get_option('liveblogging_comments')) { ?> checked="checked"<?php } ?> /></td>
+        </tr>
+    
+    </table>
+    
+    <h3><?php _e('Posting to Twitter'); ?></h3>
+    <table class="form-table">
         
         <tr valign="top">
             <th scope="row"><?php _e('Connect with Twitter', 'live-blogging'); ?></th>
@@ -237,6 +242,11 @@ function live_blogging_options()
             <td><input type="checkbox" name="liveblogging_enable_twitter" value="1"<?php if ('1' == get_option('liveblogging_enable_twitter')) { ?> checked="checked"<?php } ?> /></td>
         </tr>
 <?php } ?>
+    
+    </table>
+    
+    <h3><?php _e('Live Blog Style'); ?></h3>
+    <table class="form-table">
         
         <tr valign="top">
             <th scope="row"><label for="liveblogging_date_style"><?php _e('Date specifier for live blog entries (see <a href="http://uk3.php.net/manual/en/function.date.php">PHP\'s date function</a> for allowable strings)', 'live-blogging'); ?></label></th>
@@ -247,7 +257,11 @@ function live_blogging_options()
             <th scope="row"><label for="liveblogging_style"><?php _e('Style for live blogging entries ($DATE gets replaced with the entry date/time, in the format specified above, $CONTENT with the body of the entry and $AUTHOR with the name of that author)', 'live-blogging'); ?></label></th>
             <td><textarea name="liveblogging_style" cols="60" rows="8"><?php echo esc_html(get_option('liveblogging_style')); ?></textarea></td>
         </tr>
-        
+    
+    </table>
+    
+    <h3><?php _e('Meteor Configuration'); ?></h3>
+    <table class="form-table">
         <tr valign="top">
             <th scope="row"><label for="liveblogging_meteor_host"><?php _e('Meteor Subscriber Host (the publicly accessible URL of your Meteor server - can be left blank if not using Meteor)', 'live-blogging'); ?></label></th>
             <td><input type="text" name="liveblogging_meteor_host" value="<?php echo esc_attr(get_option('liveblogging_meteor_host')); ?>" /></td>
@@ -267,6 +281,11 @@ function live_blogging_options()
             <th scope="row"><label for="liveblogging_id"><?php _e('Meteor Identifier (a unique string to identify this WordPress install - can be left blank if not using Meteor)', 'live-blogging'); ?></label></th>
             <td><input type="text" name="liveblogging_id" value="<?php echo esc_attr(get_option('liveblogging_id')); ?>" /></td>
         </tr>
+    
+    </table>
+    
+    <h3><?php _e('Advanced Settings'); ?></h3>
+    <table class="form-table">
         
         <tr valign="top">
             <th scope="row"><label for="liveblogging_unhooks"><?php _e('Actions to be unhooked when displaying live blog content (advanced feature that can be used to work around badly coded plugins that mangle individual live blog entries in undesirable ways, e.g., some bookmarking plugins)', 'live-blogging'); ?></label></th>
@@ -553,6 +572,7 @@ function live_blogging_get_entry($entry)
 }
 
 // Insert the live blog in a post
+add_shortcode('liveblog', 'live_blogging_shortcode');
 function live_blogging_shortcode($atts, $id = null)
 {
     global $post, $liveblog_client_id;
@@ -595,7 +615,15 @@ function live_blogging_shortcode($atts, $id = null)
     $s .= '</div>';
     return $s;
 }
-add_shortcode('liveblog', 'live_blogging_shortcode');
+
+function live_blogging_build_comments($liveblog)
+{
+    $args = apply_filters('live_blogging_build_comments', array());
+    ob_start();
+    wp_list_comments($args, get_comments(array('status' => 'approve', 'post_id' => intval($liveblog), 'order' => 'ASC')));
+    $comments = ob_get_clean();
+    return $comments;
+}
 
 //
 // METEOR SUPPORT
@@ -688,19 +716,38 @@ define('LIVE_BLOGGING_TWITTER_CONSUMER_SECRET', 'JnkDixVMDuTA103zPQSRs9eWLzy1Lgv
 add_action('publish_liveblog_entry', 'live_blogging_tweet', 10, 2);
 function live_blogging_tweet($id, $post)
 {
-    if ('1' == get_option('liveblogging_enable_twitter') && '' == get_post_meta($id, '_liveblogging_tweeted', single))
+    if ('1' == get_option('liveblogging_enable_twitter') && '' == get_post_meta($id, '_liveblogging_tweeted', true))
     {
         $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
         if (strlen($post->post_content) > 140)
         {
-            $connection->post('statuses/update', array('status' => substr($post->post_content, 0, 139) . '…'));
+            $tweet = $connection->post('statuses/update', array('status' => substr($post->post_content, 0, 139) . '…'));
         }
         else
         {
-            $connection->post('statuses/update', array('status' => $post->post_content));
+            $tweet = $connection->post('statuses/update', array('status' => $post->post_content));
         }
     }
-    update_post_meta($id, '_liveblogging_tweeted', 'done');
+    if (isset($tweet->id))
+    {
+        update_post_meta($id, '_liveblogging_tweeted', $tweet->id);
+    }
+}
+
+add_action('delete_post', 'live_blogging_delete_tweet');
+add_action('trash_post', 'live_blogging_delete_tweet');
+function live_blogging_delete_tweet($id)
+{
+    $tweet = get_post_meta($id, '_liveblogging_tweeted', true);
+    if ('1' == get_option('liveblogging_enable_twitter') && '' != $tweet)
+    {
+        $post = get_post($id);
+        if ('liveblog_entry' == $post->post_type)
+        {
+            $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
+            $connection->post('statuses/destroy/' . $tweet);
+        }
+    }
 }
 
 // POLLING SUPPORT
@@ -708,6 +755,8 @@ function live_blogging_ajax()
 {
     header('Content-Type: application/json');
     $liveblog_id = $_POST['liveblog_id'];
+    
+    // Build currently active posts
     $q = new WP_Query(array(
           'post_type' => 'liveblog_entry',
           'liveblog' => $liveblog_id,
@@ -726,6 +775,51 @@ function live_blogging_ajax()
                 'html' => live_blogging_get_entry($q->post)
             );
     }
+    
+    foreach (get_post_meta($liveblog_id, '_liveblogging_deleted') as $deleted)
+    {
+        $r[] = array(
+                'liveblog' => $liveblog_id,
+                'id' => $deleted,
+                'type' => 'delete-entry'
+            );
+    }
+    if ('1' == get_option('liveblogging_comments'))
+    {
+        $r[] = array(
+                'liveblog' => $liveblog_id,
+                'type' => 'comments',
+                'html' => live_blogging_build_comments($liveblog_id)
+            );
+    }
     echo json_encode($r);
     die();
+}
+
+add_action('delete_post', 'live_blogging_poll_mark_to_delete');
+add_action('trash_post', 'live_blogging_poll_mark_to_delete');
+function live_blogging_poll_mark_to_delete($id)
+{
+    $post = get_post($id);
+    if ('liveblog_entry' == $post->post_type)
+    {
+        $liveblogs = wp_get_object_terms(array($id), 'liveblog');
+        foreach ($liveblogs as $liveblog)
+        {
+            add_post_meta(intval($liveblog->name), '_liveblogging_deleted', $id);
+        }
+    }
+}
+
+add_action('publish_liveblog_entry', 'live_blogging_poll_mark_to_undelete', 10, 2);
+function live_blogging_poll_mark_to_undelete($id, $post)
+{
+    if ('liveblog_entry' == $post->post_type)
+    {
+        $liveblogs = wp_get_object_terms(array($id), 'liveblog');
+        foreach ($liveblogs as $liveblog)
+        {
+            delete_post_meta(intval($liveblog->name), '_liveblogging_deleted', $id);
+        }
+    }
 }
