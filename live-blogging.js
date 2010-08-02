@@ -99,6 +99,7 @@ function setup_toggle_comment_updating()
             {
                 jQuery('.commentlist').html(queued_comments)
                 queued_comments = ''
+                setup_toggle_comment_updating()
             }
         })
     })

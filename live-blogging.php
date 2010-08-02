@@ -31,9 +31,6 @@ Author URI: http://www.pling.org.uk/
  TODO:
  
  Migration of old content
- New JavaScript/PHP for polling and pushing
- * Meteor to send notifications for 4 events: comment
-                                              remove_comment
  New documentation
  - How to use
    * style format
@@ -48,6 +45,7 @@ Author URI: http://www.pling.org.uk/
  - What is Meteor/when to use it
  - RSS feed for custom post types: WP-URL/feed/?post_type=liveblog_entry&liveblog=ID
  - Filter for custom comment displaying
+ - Comment updating won't work with imported live blogs
  
  For version 3.1:
  * @replying to a tweet from a live blog leaves a comment on that live blog
@@ -576,6 +574,14 @@ add_shortcode('liveblog', 'live_blogging_shortcode');
 function live_blogging_shortcode($atts, $id = null)
 {
     global $post, $liveblog_client_id;
+    if (!empty($id))
+    {
+        $id = 'legacy-' . $id;
+    }
+    else
+    {
+        $id = $post->ID;
+    }
     $s = '';
     if ('meteor' == get_option('liveblogging_method'))
     {
@@ -585,7 +591,7 @@ function live_blogging_shortcode($atts, $id = null)
                 Meteor.hostid = "' . $liveblog_client_id . '";
                 Meteor.host = "' . get_option('liveblogging_meteor_host') . '";
                 Meteor.registerEventCallback("process", live_blogging_handle_data);
-                Meteor.joinChannel("' . get_option('liveblogging_id') . '-liveblog-' . $post->ID . '", 2);
+                Meteor.joinChannel("' . get_option('liveblogging_id') . '-liveblog-' . $id . '", 2);
                 Meteor.mode = "stream";
                 jQuery(document).ready(function() {
                     Meteor.connect();
@@ -597,16 +603,16 @@ function live_blogging_shortcode($atts, $id = null)
     {
         $s .= '<script type="text/javascript">
                /*<![CDATA[ */
-                setTimeout(live_blogging_poll, 15000, ' . $post->ID . ')
+                setTimeout(live_blogging_poll, 15000, "' . $id . '")
                /*]]>*/
                </script>';
     }
     $q = new WP_Query(array(
           'post_type' => 'liveblog_entry',
-          'liveblog' => $post->ID,
+          'liveblog' => $id,
           'posts_per_page' => -1
         ));
-    $s .= '<div id="liveblog-' . $post->ID . '">';
+    $s .= '<div id="liveblog-' . $id . '">';
     while ($q->have_posts())
     {
         $q->next_post();
@@ -702,6 +708,26 @@ function live_blogging_delete_to_meteor($id)
             fwrite($fd, "QUIT\n");
             fclose($fd);
         }
+    }
+}
+
+add_action('edit_comment', 'live_blogging_comment_to_meteor');
+add_action('comment_post', 'live_blogging_comment_to_meteor');
+add_action('wp_set_comment_status', 'live_blogging_comment_to_meteor');
+function live_blogging_comment_to_meteor($id)
+{
+    if ('1' == get_option('liveblogging_comments') && 'meteor' == get_option('liveblogging_method'))
+    {
+        $comment = get_comment($id);
+        $fd = fsockopen(get_option('liveblogging_meteor_controller'), get_option('liveblogging_meteor_controller_port'));
+        $r = array(
+            'liveblog' => $comment->comment_post_ID,
+            'type' => 'comments',
+            'html' => live_blogging_build_comments($comment->comment_post_ID)
+        );
+        fwrite($fd, 'ADDMESSAGE ' . get_option('liveblogging_id') . '-liveblog-' . $comment->comment_post_ID . ' ' . addslashes(json_encode($r)) . "\n");
+        fwrite($fd, "QUIT\n");
+        fclose($fd);
     }
 }
 
