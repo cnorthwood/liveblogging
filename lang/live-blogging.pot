@@ -1,0 +1,245 @@
+# Translation of the WordPress plugin Live Blogging 2.0 by Chris Northwood.
+# Copyright (C) 2010 Chris Northwood
+# This file is distributed under the same license as the Live Blogging package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Live Blogging 2.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/live-blogging\n"
+"POT-Creation-Date: 2010-08-02 23:46+0000\n"
+"PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: live-blogging.php:72
+msgid "Live Blog Entries"
+msgstr ""
+
+#: live-blogging.php:73
+msgid "Live Blog Entry"
+msgstr ""
+
+#: live-blogging.php:74
+msgid "Add New Entry"
+msgstr ""
+
+#: live-blogging.php:75 live-blogging.php:77
+msgid "Edit Entry"
+msgstr ""
+
+#: live-blogging.php:76
+msgid "New Entry"
+msgstr ""
+
+#: live-blogging.php:78
+msgid "Search Entries"
+msgstr ""
+
+#: live-blogging.php:79
+msgid "No entries found"
+msgstr ""
+
+#: live-blogging.php:80
+msgid "No entries found in trash"
+msgstr ""
+
+#: live-blogging.php:82
+msgid "Individual entries for a live blog"
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (Live Blogging 2.0)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: live-blogging.php:171
+msgid "Live Blogging"
+msgstr ""
+
+#: live-blogging.php:174 live-blogging.php:508
+msgid "Meteor Status"
+msgstr ""
+
+#: live-blogging.php:176
+msgid "Enable Live Blog"
+msgstr ""
+
+#: live-blogging.php:177
+msgid "Select Live Blog"
+msgstr ""
+
+#: live-blogging.php:185
+msgid "Live Blogging Options"
+msgstr ""
+
+#: live-blogging.php:189
+msgid "Automatic Updating"
+msgstr ""
+
+#: live-blogging.php:193
+msgid "Method to use for live blog reader updating"
+msgstr ""
+
+#: live-blogging.php:195
+msgid "Poll (default, requires no special configuration)"
+msgstr ""
+
+#: live-blogging.php:196
+msgid ""
+"Stream using Meteor (lower server load and faster updates, but needs special "
+"configuration)"
+msgstr ""
+
+#: live-blogging.php:197
+msgid "Disable automatic updates"
+msgstr ""
+
+#: live-blogging.php:202
+msgid ""
+"Enable auto-updating of comments (this will not work on some themes, please "
+"read the documentation!)"
+msgstr ""
+
+#: live-blogging.php:208
+msgid "Posting to Twitter"
+msgstr ""
+
+#: live-blogging.php:212
+msgid "Connect with Twitter"
+msgstr ""
+
+#: live-blogging.php:216
+msgid ""
+"You are already connected to Twitter. Click the image below to change the "
+"account you are connected to."
+msgstr ""
+
+#: live-blogging.php:221
+msgid "You are not yet connected to Twitter. Click the image below to connect."
+msgstr ""
+
+#: live-blogging.php:232
+msgid "Unable to connect to Twitter at this time."
+msgstr ""
+
+#: live-blogging.php:239
+msgid "Enable posting to Twitter"
+msgstr ""
+
+#: live-blogging.php:246
+msgid "Live Blog Style"
+msgstr ""
+
+#: live-blogging.php:250
+msgid ""
+"Date specifier for live blog entries (see <a href=\"http://uk3.php.net/"
+"manual/en/function.date.php\">PHP's date function</a> for allowable strings)"
+msgstr ""
+
+#: live-blogging.php:255
+msgid ""
+"Style for live blogging entries ($DATE gets replaced with the entry date/"
+"time, in the format specified above, $CONTENT with the body of the entry and "
+"$AUTHOR with the name of that author)"
+msgstr ""
+
+#: live-blogging.php:261
+msgid "Meteor Configuration"
+msgstr ""
+
+#: live-blogging.php:264
+msgid ""
+"Meteor Subscriber Host (the publicly accessible URL of your Meteor server - "
+"can be left blank if not using Meteor)"
+msgstr ""
+
+#: live-blogging.php:269
+msgid ""
+"Meteor Controller Host (the private IP of the Meteor server - can be left "
+"blank if not using Meteor)"
+msgstr ""
+
+#: live-blogging.php:274
+msgid "Meteor Controller Port (can be left blank if not using Meteor)"
+msgstr ""
+
+#: live-blogging.php:279
+msgid ""
+"Meteor Identifier (a unique string to identify this WordPress install - can "
+"be left blank if not using Meteor)"
+msgstr ""
+
+#: live-blogging.php:285
+msgid "Advanced Settings"
+msgstr ""
+
+#: live-blogging.php:289
+msgid ""
+"Actions to be unhooked when displaying live blog content (advanced feature "
+"that can be used to work around badly coded plugins that mangle individual "
+"live blog entries in undesirable ways, e.g., some bookmarking plugins)"
+msgstr ""
+
+#: live-blogging.php:298 live-blogging.php:318
+msgid "Delete Unhook"
+msgstr ""
+
+#: live-blogging.php:311
+msgid "Add Unhook"
+msgstr ""
+
+#: live-blogging.php:333
+msgid "Save Changes"
+msgstr ""
+
+#: live-blogging.php:353
+msgid "Enable live blogging on this post"
+msgstr ""
+
+#: live-blogging.php:354
+msgid ""
+"Please remember to include the [liveblog] shortcode where you want the "
+"liveblog in this post to appear."
+msgstr ""
+
+#: live-blogging.php:421 live-blogging.php:456
+msgid "There are no currently active live blogs."
+msgstr ""
+
+#: live-blogging.php:425
+msgid "Select live blog"
+msgstr ""
+
+#: live-blogging.php:495
+msgid "Live Blog"
+msgstr ""
+
+#: live-blogging.php:504
+msgid "Access Denied"
+msgstr ""
+
+#: live-blogging.php:517
+msgid "Unable to establish connection to Meteor:"
+msgstr ""
+
+#: live-blogging.php:533
+msgid "Connection to Meteor not configured."
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/live-blogging/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Plugin to support automatic live blogging"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Chris Northwood"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.pling.org.uk/"
+msgstr ""
