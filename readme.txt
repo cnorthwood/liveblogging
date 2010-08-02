@@ -2,8 +2,8 @@
 Contributors: chrisnorthwood
 Tags: live, micro, JavaScript, blogging, event
 Requires at least: 2.7
-Tested up to: 2.8.6
-Stable tag: 1.2
+Tested up to: 2.9
+Stable tag: 1.3
 
 Live Blogging is a plugin to support micro blogging of live events using Comet/Push HTTP technology.
 
@@ -32,6 +32,10 @@ Once you've finished blogging that event, go back to Manage Live Blogs to Deacti
 And that's it.
 
 == Changelog ==
+
+= 1.3 =
+
+Fix timezone bugs in certain PHP/WordPress combinations
 
 = 1.2 =
 
