@@ -7,9 +7,7 @@ Version: 1.9
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
-*/
 
-/*
 Live Blogging for WordPress
 Copyright (C) 2010 Chris Northwood <chris@pling.org.uk>
 
@@ -32,21 +30,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  TODO:
  
  Migration of old content
- New documentation
- - How to use
-   * style format
-   * date format
-   * unhooks
- - FAQ: ensure liveblog tag is there/disabling liveblog just means disabling
-        auto-updating
  - FAQ: migration
- - FAQ: Editing posts does/can not edit Twitter
- - Known Issue: Setting posts to appear at a point back in time will not appear
-                in the correct place when auto updating
- - What is Meteor/when to use it
- - RSS feed for custom post types: WP-URL/feed/?post_type=liveblog_entry&liveblog=ID
- - Filter for custom comment displaying
- - Comment updating won't work with imported live blogs
  
  For version 3.1:
  * @replying to a tweet from a live blog leaves a comment on that live blog
