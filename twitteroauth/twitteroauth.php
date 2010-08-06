@@ -7,7 +7,7 @@
  */
 
 /* Load OAuth lib. You can find it at http://oauth.net */
-if (!class_exists('OAuth_Exception'))
+if (!class_exists('OAuthException'))
 {
   require_once('OAuth.php');
 }

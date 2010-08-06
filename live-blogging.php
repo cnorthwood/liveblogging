@@ -29,6 +29,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 /*
  For version 3.1:
  * @replying to a tweet from a live blog leaves a comment on that live blog
+ * After publishing a new live blog entry, go back to the new entry screen
+ * Optionally show live blog connection status
 */
 
 //
@@ -766,13 +768,14 @@ function live_blogging_tweet($id, $post)
     if ('1' == get_option('liveblogging_enable_twitter') && '' == get_post_meta($id, '_liveblogging_tweeted', true))
     {
         $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
-        if (strlen($post->post_content) > 140)
+        $content = filter_var($post->post_content, FILTER_SANITIZE_STRING);
+        if (strlen($content) > 140)
         {
-            $tweet = $connection->post('statuses/update', array('status' => substr($post->post_content, 0, 139) . '…'));
+            $tweet = $connection->post('statuses/update', array('status' => substr($content, 0, 139) . '…'));
         }
         else
         {
-            $tweet = $connection->post('statuses/update', array('status' => $post->post_content));
+            $tweet = $connection->post('statuses/update', array('status' => $content));
         }
     }
     if (isset($tweet->id))
