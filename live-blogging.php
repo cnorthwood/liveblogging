@@ -607,13 +607,8 @@ function live_blogging_shortcode($atts, $id = null)
         $id = $post->ID;
     }
     $s = '';
-    if ('meteor' == get_option('liveblogging_method'))
+    if ('meteor' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog', true) == '1')
     {
-    
-    if ('meteor' == get_option('liveblogging_method'))
-    {
-        wp_enqueue_script('meteor', 'http://' . get_option('liveblogging_meteor_host') . '/meteor.js');
-    }
         $s .= '<script type="text/javascript" src="http://' . get_option('liveblogging_meteor_host') . '/meteor.js"></script>
                <script type="text/javascript">
                /*<![CDATA[ */
@@ -629,7 +624,7 @@ function live_blogging_shortcode($atts, $id = null)
                /*]]>*/
                </script>';
     }
-    elseif ('poll' == get_option('liveblogging_method'))
+    elseif ('poll' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog', true) == '1')
     {
         $s .= '<script type="text/javascript">
                /*<![CDATA[ */
