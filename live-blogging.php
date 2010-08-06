@@ -402,7 +402,7 @@ function live_blogging_entry_meta()
     while ($q->have_posts())
     {
         $q->next_post();
-        $lblogs[$q->post->ID] = esc_html($q->post->post_title);
+        $lblogs[$q->post->ID] = esc_attr($q->post->post_title);
     }
     
     // Add the current live blog, always
@@ -410,15 +410,8 @@ function live_blogging_entry_meta()
     $lbs = wp_get_object_terms(array($post->ID), 'liveblog');
     foreach ($lbs as $b)
     {
-        if ('legacy' == substr($b->name, 0, 6))
-        {
-            $lblogs[$b->name] = $b->description;
-        }
-        else
-        {
-            $lblogs[intval($b->name)] = get_the_title(intval($b->name));
-        }
-        $active_id = intval($b->name);
+        $lblogs[$b->name] = live_blogging_taxonomy_name($b);
+        $active_id = $b->name;
     }
     
     // Error if there are no live blogs
@@ -482,6 +475,25 @@ function live_blogging_fix_title($title, $id)
     return $title;
 }
 
+function live_blogging_taxonomy_name($tax)
+{
+    if ('legacy' == substr($tax->name, 0, 6))
+    {
+        return $tax->description;
+    }
+    
+    $test = get_post(intval($tax->name));
+    
+    if ($test == null)
+    {
+        return 'Deleted post: ' . $tax->name;
+    }
+    else
+    {
+        return $test->post_title;
+    }
+}
+
 // Show a custom column on the liveblog_entry edit screen
 add_action('manage_posts_custom_column', 'live_blogging_custom_column', 10, 2);
 function live_blogging_custom_column($column_name, $post_ID)
@@ -492,15 +504,7 @@ function live_blogging_custom_column($column_name, $post_ID)
             $blogs = wp_get_object_terms(array($post_ID), 'liveblog');
             if (count($blogs) > 0)
             {
-                $blog = $blogs[0];
-                if ('legacy' == substr($blog->name, 0, 6))
-                {
-                    echo $blog->description;
-                }
-                else
-                {
-                    echo get_the_title(intval($blog->name));
-                }
+                echo '<a href="post.php?post=' . $blogs[0]->name . '&amp;action=edit">' . live_blogging_taxonomy_name($blogs[0]) . '</a>';
             }
             break;
     }
