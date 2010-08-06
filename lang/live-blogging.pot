@@ -1,4 +1,4 @@
-# Translation of the WordPress plugin Live Blogging 2.0 by Chris Northwood.
+# Translation of the WordPress plugin Live Blogging 1.9 by Chris Northwood.
 # Copyright (C) 2010 Chris Northwood
 # This file is distributed under the same license as the Live Blogging package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
@@ -6,227 +6,270 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Live Blogging 2.0\n"
+"Project-Id-Version: Live Blogging 1.9\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/live-blogging\n"
-"POT-Creation-Date: 2010-08-02 23:46+0000\n"
+"POT-Creation-Date: 2010-08-06 00:44+0000\n"
 "PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: live-blogging.php:72
+#: live-blogging.php:57
 msgid "Live Blog Entries"
 msgstr ""
 
-#: live-blogging.php:73
+#: live-blogging.php:58
 msgid "Live Blog Entry"
 msgstr ""
 
-#: live-blogging.php:74
+#: live-blogging.php:59
 msgid "Add New Entry"
 msgstr ""
 
-#: live-blogging.php:75 live-blogging.php:77
+#: live-blogging.php:60 live-blogging.php:62
 msgid "Edit Entry"
 msgstr ""
 
-#: live-blogging.php:76
+#: live-blogging.php:61
 msgid "New Entry"
 msgstr ""
 
-#: live-blogging.php:78
+#: live-blogging.php:63
 msgid "Search Entries"
 msgstr ""
 
-#: live-blogging.php:79
+#: live-blogging.php:64
 msgid "No entries found"
 msgstr ""
 
-#: live-blogging.php:80
+#: live-blogging.php:65
 msgid "No entries found in trash"
 msgstr ""
 
-#: live-blogging.php:82
+#: live-blogging.php:67
 msgid "Individual entries for a live blog"
 msgstr ""
 
-#. #-#-#-#-#  plugin.pot (Live Blogging 2.0)  #-#-#-#-#
+#. #-#-#-#-#  plugin.pot (Live Blogging 1.9)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
-#: live-blogging.php:171
+#: live-blogging.php:156
 msgid "Live Blogging"
 msgstr ""
 
-#: live-blogging.php:174 live-blogging.php:508
+#: live-blogging.php:159 live-blogging.php:885
+msgid "Migrate Live Blogging"
+msgstr ""
+
+#: live-blogging.php:163 live-blogging.php:525
 msgid "Meteor Status"
 msgstr ""
 
-#: live-blogging.php:176
+#: live-blogging.php:165
 msgid "Enable Live Blog"
 msgstr ""
 
-#: live-blogging.php:177
+#: live-blogging.php:166
 msgid "Select Live Blog"
 msgstr ""
 
-#: live-blogging.php:185
+#: live-blogging.php:174
 msgid "Live Blogging Options"
 msgstr ""
 
-#: live-blogging.php:189
+#: live-blogging.php:182
+msgid "It appears you have live blogs created in version 1 of the plugin."
+msgstr ""
+
+#: live-blogging.php:183
+msgid "Click here to update your legacy live blogs."
+msgstr ""
+
+#: live-blogging.php:191
 msgid "Automatic Updating"
 msgstr ""
 
-#: live-blogging.php:193
+#: live-blogging.php:195
 msgid "Method to use for live blog reader updating"
 msgstr ""
 
-#: live-blogging.php:195
+#: live-blogging.php:197
 msgid "Poll (default, requires no special configuration)"
 msgstr ""
 
-#: live-blogging.php:196
+#: live-blogging.php:198
 msgid ""
 "Stream using Meteor (lower server load and faster updates, but needs special "
 "configuration)"
 msgstr ""
 
-#: live-blogging.php:197
+#: live-blogging.php:199
 msgid "Disable automatic updates"
 msgstr ""
 
-#: live-blogging.php:202
+#: live-blogging.php:204
 msgid ""
 "Enable auto-updating of comments (this will not work on some themes, please "
 "read the documentation!)"
 msgstr ""
 
-#: live-blogging.php:208
+#: live-blogging.php:210
 msgid "Posting to Twitter"
 msgstr ""
 
-#: live-blogging.php:212
+#: live-blogging.php:214
 msgid "Connect with Twitter"
 msgstr ""
 
-#: live-blogging.php:216
+#: live-blogging.php:218
 msgid ""
 "You are already connected to Twitter. Click the image below to change the "
 "account you are connected to."
 msgstr ""
 
-#: live-blogging.php:221
+#: live-blogging.php:223
 msgid "You are not yet connected to Twitter. Click the image below to connect."
 msgstr ""
 
-#: live-blogging.php:232
+#: live-blogging.php:234
 msgid "Unable to connect to Twitter at this time."
 msgstr ""
 
-#: live-blogging.php:239
+#: live-blogging.php:241
 msgid "Enable posting to Twitter"
 msgstr ""
 
-#: live-blogging.php:246
+#: live-blogging.php:248
 msgid "Live Blog Style"
 msgstr ""
 
-#: live-blogging.php:250
+#: live-blogging.php:252
 msgid ""
 "Date specifier for live blog entries (see <a href=\"http://uk3.php.net/"
 "manual/en/function.date.php\">PHP's date function</a> for allowable strings)"
 msgstr ""
 
-#: live-blogging.php:255
+#: live-blogging.php:257
 msgid ""
 "Style for live blogging entries ($DATE gets replaced with the entry date/"
 "time, in the format specified above, $CONTENT with the body of the entry and "
 "$AUTHOR with the name of that author)"
 msgstr ""
 
-#: live-blogging.php:261
+#: live-blogging.php:263
 msgid "Meteor Configuration"
 msgstr ""
 
-#: live-blogging.php:264
+#: live-blogging.php:266
 msgid ""
 "Meteor Subscriber Host (the publicly accessible URL of your Meteor server - "
 "can be left blank if not using Meteor)"
 msgstr ""
 
-#: live-blogging.php:269
+#: live-blogging.php:271
 msgid ""
 "Meteor Controller Host (the private IP of the Meteor server - can be left "
 "blank if not using Meteor)"
 msgstr ""
 
-#: live-blogging.php:274
+#: live-blogging.php:276
 msgid "Meteor Controller Port (can be left blank if not using Meteor)"
 msgstr ""
 
-#: live-blogging.php:279
+#: live-blogging.php:281
 msgid ""
 "Meteor Identifier (a unique string to identify this WordPress install - can "
 "be left blank if not using Meteor)"
 msgstr ""
 
-#: live-blogging.php:285
+#: live-blogging.php:287
 msgid "Advanced Settings"
 msgstr ""
 
-#: live-blogging.php:289
+#: live-blogging.php:291
 msgid ""
 "Actions to be unhooked when displaying live blog content (advanced feature "
 "that can be used to work around badly coded plugins that mangle individual "
 "live blog entries in undesirable ways, e.g., some bookmarking plugins)"
 msgstr ""
 
-#: live-blogging.php:298 live-blogging.php:318
+#: live-blogging.php:300 live-blogging.php:320
 msgid "Delete Unhook"
 msgstr ""
 
-#: live-blogging.php:311
+#: live-blogging.php:313
 msgid "Add Unhook"
 msgstr ""
 
-#: live-blogging.php:333
+#: live-blogging.php:335
 msgid "Save Changes"
 msgstr ""
 
-#: live-blogging.php:353
+#: live-blogging.php:356
 msgid "Enable live blogging on this post"
 msgstr ""
 
-#: live-blogging.php:354
+#: live-blogging.php:357
 msgid ""
 "Please remember to include the [liveblog] shortcode where you want the "
 "liveblog in this post to appear."
 msgstr ""
 
-#: live-blogging.php:421 live-blogging.php:456
+#: live-blogging.php:431 live-blogging.php:466
 msgid "There are no currently active live blogs."
 msgstr ""
 
-#: live-blogging.php:425
+#: live-blogging.php:435
 msgid "Select live blog"
 msgstr ""
 
-#: live-blogging.php:495
+#: live-blogging.php:512
 msgid "Live Blog"
 msgstr ""
 
-#: live-blogging.php:504
+#: live-blogging.php:521
 msgid "Access Denied"
 msgstr ""
 
-#: live-blogging.php:517
+#: live-blogging.php:534
 msgid "Unable to establish connection to Meteor:"
 msgstr ""
 
-#: live-blogging.php:533
+#: live-blogging.php:550
 msgid "Connection to Meteor not configured."
 msgstr ""
+
+#: live-blogging.php:897
+msgid ""
+"Click the button below to upgrade legacy live blogs to the new system. To "
+"avoid timeout errors, only 25 entries at a time will be translated. For "
+"blogs with large numbers of live blog entries, it may be necessary to run "
+"this multiple times to convert them all."
+msgstr ""
+
+#: live-blogging.php:898
+msgid "Start"
+msgstr ""
+
+#: live-blogging.php:943
+#, php-format
+msgid "%d entry left to migrate"
+msgid_plural "%d entries left to migrate."
+msgstr[0] ""
+msgstr[1] ""
+
+#: live-blogging.php:946 live-blogging.php:979
+msgid "Next batch"
+msgstr ""
+
+#: live-blogging.php:976
+#, php-format
+msgid "%d description left to migrate"
+msgid_plural "%d descriptions left to migrate."
+msgstr[0] ""
+msgstr[1] ""
 
 #. Plugin URI of the plugin/theme
 msgid "http://wordpress.org/extend/plugins/live-blogging/"
