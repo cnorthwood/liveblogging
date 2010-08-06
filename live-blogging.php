@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 1.9
+Version: 1.9.1
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -27,11 +27,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 
 /*
- TODO:
- 
- Migration of old content
- - FAQ: migration
- 
  For version 3.1:
  * @replying to a tweet from a live blog leaves a comment on that live blog
 */
@@ -78,11 +73,7 @@ function live_blogging_init()
         wp_enqueue_script('live-blogging', plugins_url('live-blogging.js', __FILE__), array('jquery', 'json2'));
     }
     
-    if ('meteor' == get_option('liveblogging_method'))
-    {
-        wp_enqueue_script('meteor', 'http://' . get_option('liveblogging_meteor_host') . '/meteor.js');
-    }
-    elseif ('poll' == get_option('liveblogging_method'))
+    if ('poll' == get_option('liveblogging_method'))
     {
         wp_localize_script('live-blogging', 'live_blogging', array('ajaxurl' => addslashes(admin_url('admin-ajax.php'))));
         add_action('wp_ajax_live_blogging_poll', 'live_blogging_ajax');
@@ -419,7 +410,6 @@ function live_blogging_entry_meta()
         }
         else
         {
-            $b = $b->name;
             $lblogs[intval($b->name)] = get_the_title(intval($b->name));
         }
         $active_id = intval($b->name);
@@ -477,7 +467,11 @@ function live_blogging_fix_title($title, $id)
     $post = get_post($id);
     if ('liveblog_entry' == $post->post_type)
     {
-        $title = $post->post_content;
+        $title = filter_var($post->post_content, FILTER_SANITIZE_STRING);
+        if (strlen($title) > 140)
+        {
+            $title = substr($title, 0, 140) . '&hellip;';
+        }
     }
     return $title;
 }
@@ -602,7 +596,13 @@ function live_blogging_shortcode($atts, $id = null)
     $s = '';
     if ('meteor' == get_option('liveblogging_method'))
     {
-        $s .= '<script type="text/javascript">
+    
+    if ('meteor' == get_option('liveblogging_method'))
+    {
+        wp_enqueue_script('meteor', 'http://' . get_option('liveblogging_meteor_host') . '/meteor.js');
+    }
+        $s .= '<script type="text/javascript" src="http://' . get_option('liveblogging_meteor_host') . '/meteor.js"></script>
+               <script type="text/javascript">
                /*<![CDATA[ */
                 // Configure Meteor
                 Meteor.hostid = "' . $liveblog_client_id . '";
@@ -752,7 +752,11 @@ function live_blogging_comment_to_meteor($id)
 // TWITTER SUPPORT
 //
 
-include('twitteroauth/twitteroauth.php');
+if (!class_exists('TwitterOAuth'))
+{
+    include('twitteroauth/twitteroauth.php');
+}
+
 define('LIVE_BLOGGING_TWITTER_CONSUMER_KEY', 'ToetcXqpSlUG8rObbnxwyA');
 define('LIVE_BLOGGING_TWITTER_CONSUMER_SECRET', 'JnkDixVMDuTA103zPQSRs9eWLzy1Lgv2E97h1q2GC4');
 

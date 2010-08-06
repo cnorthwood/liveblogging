@@ -80,6 +80,16 @@ this post'' box. This will stop automatic updating and any new updates to be
 added to the live blog, but will preserve any existing live blogging
 entries for posterity.
 
+= How do I upgrade my live blogs from version 1.x of the plugin? =
+
+If the plugin detects that old data from the plugin exists, then it will prompt
+you to upgrade on the options screen. Also, a 'Live Blogging Migration' option
+will exist under the Tools menu. Run that tool and follow the prompts to upgrade
+all your old entries to the new version.
+
+Please note that live blogs created in previous versions of the software can
+not have new entries added to them.
+
 = If I change the time on a live blog entry to appear in the past, then it doesn't appear in the right order during automatic updating? =
 
 Unfortunately this is a limitation on the system - any new entries must appear
