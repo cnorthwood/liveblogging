@@ -154,6 +154,10 @@ add_action('admin_menu', 'live_blogging_add_menu');
 function live_blogging_add_menu()
 {
     add_submenu_page('options-general.php', __('Live Blogging', 'live-blogging'), __('Live Blogging', 'live-blogging'), 'manage_options', 'live-blogging-options', 'live_blogging_options');
+    if (live_blogging_legacy_exists())
+    {
+        add_submenu_page('tools.php', __('Migrate Live Blogging', 'live-blogging'), __('Migrate Live Blogging', 'live-blogging'), 'manage_options', 'live-blogging-upgrade', 'live_blogging_migrate');
+    }
     if ('meteor' == get_option('liveblogging_method'))
     {
         add_submenu_page('index.php', __('Meteor Status', 'live-blogging'), __('Meteor Status', 'live-blogging'), 'manage_options', 'live-blogging-meteor-status', 'live_blogging_meteor_status');
@@ -168,6 +172,19 @@ function live_blogging_options()
 ?>
 <div class="wrap">
 <h2><?php _e('Live Blogging Options', 'live-blogging'); ?></h2>
+
+<?php
+    // Prompt to migrate, if needed
+    if (live_blogging_legacy_exists())
+    {
+?>
+    <div class="updated">
+        <p><?php _e('It appears you have live blogs created in version 1 of the plugin.', 'live-blogging'); ?>
+        <a href="tools.php?page=live-blogging-upgrade"><?php _e('Click here to update your legacy live blogs.', 'live-blogging'); ?></a></p>
+    </div>
+<?php
+    }
+?>
 
 <form method="post" action="options.php">
     <?php settings_fields( 'live-blogging' ); ?>
@@ -333,6 +350,7 @@ function live_blogging_post_meta()
     {
         $checked = ' checked="checked"';
     }
+    live_blogging_legacy_exists();
 ?>
 
   <p><input type="checkbox" name="live_blogging_post_enable" value="enabled"<?php echo $checked; ?> /><label for="live_blogging_post_enable"><?php _e('Enable live blogging on this post', 'live-blogging' ); ?></label></p>
@@ -392,12 +410,19 @@ function live_blogging_entry_meta()
     
     // Add the current live blog, always
     $active_id = 0;
-    $b = wp_get_object_terms(array($post->ID), 'liveblog');
-    if (count($b) > 0)
+    $lbs = wp_get_object_terms(array($post->ID), 'liveblog');
+    foreach ($lbs as $b)
     {
-        $b = $b[0]->name;
-        $lblogs[intval($b)] = get_the_title(intval($b));
-        $active_id = intval($b);
+        if ('legacy' == substr($b->name, 0, 6))
+        {
+            $lblogs[$b->name] = $b->description;
+        }
+        else
+        {
+            $b = $b->name;
+            $lblogs[intval($b->name)] = get_the_title(intval($b->name));
+        }
+        $active_id = intval($b->name);
     }
     
     // Error if there are no live blogs
@@ -452,7 +477,7 @@ function live_blogging_fix_title($title, $id)
     $post = get_post($id);
     if ('liveblog_entry' == $post->post_type)
     {
-        $title = apply_filters('get_the_excerpt', $post->post_excerpt);
+        $title = $post->post_content;
     }
     return $title;
 }
@@ -467,8 +492,15 @@ function live_blogging_custom_column($column_name, $post_ID)
             $blogs = wp_get_object_terms(array($post_ID), 'liveblog');
             if (count($blogs) > 0)
             {
-                $blog = $blogs[0]->name;
-                echo get_the_title(intval($blog));
+                $blog = $blogs[0];
+                if ('legacy' == substr($blog->name, 0, 6))
+                {
+                    echo $blog->description;
+                }
+                else
+                {
+                    echo get_the_title(intval($blog->name));
+                }
             }
             break;
     }
@@ -831,6 +863,136 @@ function live_blogging_poll_mark_to_undelete($id, $post)
         foreach ($liveblogs as $liveblog)
         {
             delete_post_meta(intval($liveblog->name), '_liveblogging_deleted', $id);
+        }
+    }
+}
+
+//
+// LEGACY MIGRATION SUPPORT
+//
+
+function live_blogging_legacy_exists()
+{
+    global $wpdb, $table_prefix;
+    $tables = $wpdb->get_results("SHOW TABLES LIKE '{$table_prefix}liveblogs'");
+    return !empty($tables);
+}
+
+function live_blogging_migrate()
+{
+?>
+<div class="wrap">
+    <h2><?php _e('Migrate Live Blogging', 'live-blogging'); ?></h2>
+<?php
+    if (isset($_POST['live_blogging_start_migration']))
+    {
+        check_admin_referer('live-blogging-upgrade');
+        live_blogging_do_migrate();
+    }
+    elseif (live_blogging_legacy_exists())
+    {
+?>
+    <form method="post" action="tools.php?page=live-blogging-upgrade">
+        <?php wp_nonce_field('live-blogging-upgrade'); ?>
+        <p><label for="live_blogging_start_migration"><?php _e('Click the button below to upgrade legacy live blogs to the new system. To avoid timeout errors, only 25 entries at a time will be translated. For blogs with large numbers of live blog entries, it may be necessary to run this multiple times to convert them all.', 'live_blogging'); ?></label></p>
+        <p><input type="submit" class="button-primary" name="live_blogging_start_migration" value="<?php _e('Start') ?>" /></p>
+    </form>
+<?php
+    }
+    else
+    {
+?>
+        <p><strong>Unable to find legacy live blog tables.</strong></p>
+<?php
+    }
+?>
+</div>
+<?php
+}
+
+function live_blogging_do_migrate()
+{
+    global $wpdb, $table_prefix;
+    echo '<p>Starting upgrade...</p><ul>';
+    $query = "SELECT `lbid`,`entryid`,`author`,`post`,`dt` FROM `{$table_prefix}liveblog_entries` LIMIT 50";
+    $entries = $wpdb->get_results($query);
+    foreach ($entries as $entry)
+    {
+        echo "<li>Importing live blog entry: " . esc_html(substr($entry->post, 0, 100)) . '&hellip;</li>';
+        $import = array(
+            'post_status' => 'publish', 
+            'post_type' => 'liveblog_entry',
+            'post_author' => $entry->author,
+            'post_title' => 'Imported legacy liveblog post',
+            'post_content' => $entry->post,
+            'post_date' => mysql2date('Y-m-d H:i:s', $entry->dt),
+            'tax_input' => array(
+                'liveblog' => 'legacy-' . $entry->lbid
+            )
+          );
+        wp_insert_post($import);
+        $wpdb->query($wpdb->prepare("DELETE FROM `{$table_prefix}liveblog_entries` WHERE `entryid`=%d", $entry->entryid));
+    }
+    echo '</ul>';
+    $num_left = $wpdb->get_results("SELECT COUNT(*) AS num_left FROM `{$table_prefix}liveblog_entries`");
+    $num_left = $num_left[0]->num_left;
+    
+    if ($num_left > 0)
+    {
+?>
+    <p><?php printf(_n("%d entry left to migrate", "%d entries left to migrate.", $num_left, 'live-blogging'), $num_left); ?></p>
+    <form method="post" action="tools.php?page=live-blogging-upgrade">
+        <?php wp_nonce_field('live-blogging-upgrade'); ?>
+        <p><input type="submit" class="button-primary" id="live-blogging-continue-migration" name="live_blogging_start_migration" value="<?php _e('Next batch') ?>" /></p>
+        <script type="text/javascript">
+        /*<![CDATA[ */
+            jQuery(function(){
+                    jQuery('#live-blogging-continue-migration').click()
+                    jQuery('#live-blogging-continue-migration').replaceWith('<em>Processing next batch...</em>')
+                });
+        /*]]>*/
+        </script>
+    </form>
+<?php
+    }
+    else
+    {
+        $query = "SELECT `lbid`,`desc` FROM `{$table_prefix}liveblogs` LIMIT 25";
+        $lbs = $wpdb->get_results($query);
+        echo '<ul>';
+        foreach ($lbs as $lb)
+        {
+            $t = get_term_by('name', 'legacy-' . $lb->lbid, 'liveblog');
+            wp_update_term($t->term_id, 'liveblog', array('description' => $lb->desc));
+            echo '<li>Imported live blog ' . $lb->desc . '</li>';
+        }
+        echo '</ul>';
+        $num_left = $wpdb->get_results("SELECT COUNT(*) AS num_left FROM `{$table_prefix}liveblog_entries`");
+        $num_left = $num_left[0]->num_left;
+        
+        if ($num_left > 0)
+        {
+?>
+            <p><?php printf(_n("%d description left to migrate", "%d descriptions left to migrate.", $num_left, 'live-blogging'), $num_left); ?></p>
+            <form method="post" action="tools.php?page=live-blogging-upgrade">
+                <?php wp_nonce_field('live-blogging-upgrade'); ?>
+                <p><input type="submit" class="button-primary" id="live-blogging-continue-migration" name="live_blogging_start_migration" value="<?php _e('Next batch') ?>" /></p>
+                <script type="text/javascript">
+                /*<![CDATA[ */
+                    jQuery(function(){
+                            jQuery('#live-blogging-continue-migration').click()
+                            jQuery('#live-blogging-continue-migration').replaceWith('<em>Processing next batch...</em>')
+                        });
+                /*]]>*/
+                </script>
+            </form>
+<?php
+        }
+        else
+        {
+            echo "<p>Cleaning up tables...</p>";
+            $wpdb->query("DROP TABLE `{$table_prefix}liveblogs`, `{$table_prefix}liveblog_entries`");
+            echo "<p>Migration done!</p>";
         }
     }
 }
