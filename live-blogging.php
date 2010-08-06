@@ -285,8 +285,11 @@ function live_blogging_options()
             <td>
             <?php
                 $i = 1;
-                foreach (get_option('liveblogging_unhooks') as $unhook)
+                $unhooks = get_option('liveblogging_unhooks');
+                if (!empty($unhooks))
                 {
+                    foreach ($unhooks as $unhook)
+                    {
 ?>
                 <div id="liveblogging_unhook_<?php echo $i; ?>">
                     <input type="text" name="liveblogging_unhooks[]" value="<?php echo esc_attr($unhook); ?>" />
@@ -300,7 +303,8 @@ function live_blogging_options()
                     </script>
                 </div><br/>
 <?php
-                    $i++;
+                        $i++;
+                    }
                 }
             ?>
                 <input type="button" id="liveblogging_unhook_add" title="<?php _e('Add Unhook', 'live-blogging'); ?>" style="width:16px;height:16px;background:url('<?php echo plugins_url('add.png', __FILE__) ?>');cursor:pointer;border:0;padding:0;margin:0;" />
@@ -561,20 +565,27 @@ function live_blogging_get_entry($entry)
     $style = get_option('liveblogging_style');
     $style = preg_replace('/\$DATE/', get_the_time(get_option('liveblogging_date_style'), $entry), $style);
     // Remove content hooks
-    foreach (get_option('liveblogging_unhooks') as $unhook)
+    $unhooks = get_option('liveblogging_unhooks');
+    if (!empty($unhooks))
     {
-        if (function_exists($unhook))
+        foreach ($unhooks as $unhook)
         {
-            remove_filter('the_content', $unhook);
+            if (function_exists($unhook))
+            {
+                remove_filter('the_content', $unhook);
+            }
         }
     }
     $style = preg_replace('/\$CONTENT/', apply_filters('the_content', $entry->post_content), $style);
     // Add content back in hooks
-    foreach (get_option('liveblogging_unhooks') as $unhook)
+    if (!empty($unhooks))
     {
-        if (function_exists($unhook))
+        foreach ($unhooks as $unhook)
         {
-            add_filter('the_content', $unhook);
+            if (function_exists($unhook))
+            {
+                add_filter('the_content', $unhook);
+            }
         }
     }
     $user = get_userdata($entry->post_author);
