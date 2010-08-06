@@ -10,9 +10,7 @@ with automatic updating of the content.
 
 == Description ==
 
-To see this plugin in use, it's probably easiest to watch [this screencast](http://www.pling.org.uk/static/livebloggingscreencast.swf)
-(please note that the screencast is of an older version of the plugin - the
-admin UI has changed but the demonstrated functionality is still the same).
+To see this plugin in use, it's probably easiest to watch [this screencast](http://www.pling.org.uk/static/Live_Blogging_for_WordPress_2.0.swf).
 
 Live Blogging is a plugin developed to support blogs that are doing live micro
 blogging of running events, such as major sport events or tech conferences.
