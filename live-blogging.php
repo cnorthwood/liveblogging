@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.0
+Version: 2.1
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -29,8 +29,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 /*
  For version 3.1:
  * @replying to a tweet from a live blog leaves a comment on that live blog
- * Optionally show live blog connection status
- * Allow new updates to appear at the bottom, instead of the top
 */
 
 //
@@ -41,6 +39,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 add_action('init', 'live_blogging_init');
 function live_blogging_init()
 {
+    // Load language
+    load_plugin_textdomain( 'live-blogging', false, dirname(plugin_basename( __FILE__ )) . '/lang/' );
+    
     // Add the taxonomy which allows us to associate entries with posts
     register_taxonomy('liveblog', 'liveblog_entry',
                       array(
@@ -68,16 +69,18 @@ function live_blogging_init()
                         'menu_icon' => plugins_url('icon.png', __FILE__)
                        ));
     
-    load_plugin_textdomain( 'live-blogging', false, dirname(plugin_basename( __FILE__ )) . '/lang/' );
-    
     if ('disabled' != get_option('liveblogging_method'))
     {
         wp_enqueue_script('live-blogging', plugins_url('live-blogging.js', __FILE__), array('jquery', 'json2'));
+        wp_localize_script('live-blogging', 'live_blogging', array(
+                                'ajaxurl' => addslashes(admin_url('admin-ajax.php')),
+                                'update_effect' => get_option('liveblogging_update_effect')
+                           ));
     }
     
     if ('poll' == get_option('liveblogging_method'))
     {
-        wp_localize_script('live-blogging', 'live_blogging', array('ajaxurl' => addslashes(admin_url('admin-ajax.php'))));
+        
         add_action('wp_ajax_live_blogging_poll', 'live_blogging_ajax');
         add_action('wp_ajax_nopriv_live_blogging_poll', 'live_blogging_ajax');
     }
@@ -98,6 +101,7 @@ function live_blogging_register_settings()
     register_setting('live-blogging', 'liveblogging_meteor_controller_port', 'intval');
     register_setting('live-blogging', 'liveblogging_id');
     register_setting('live-blogging', 'liveblogging_unhooks');
+    register_setting('live-blogging', 'liveblogging_update_effect');
 }
 
 function live_blogging_sanitise_method($input)
@@ -135,6 +139,10 @@ function live_blogging_activate()
     if (false === get_option('liveblogging_unhooks'))
     {
         add_option('liveblogging_unhooks', array('sociable_display_hook'));
+    }
+    if (false === get_option('liveblogging_update_effect'))
+    {
+        add_option('liveblogging_update_effect', 'top');
     }
 }
 
@@ -258,6 +266,14 @@ function live_blogging_options()
     
     <h3><?php _e('Live Blog Style'); ?></h3>
     <table class="form-table">
+        
+        <tr valign="top">
+            <th scope="row"><label for="liveblogging_update_effect"><?php _e('How should new entries appear?', 'live-blogging'); ?></label></th>
+            <td><select name='liveblogging_update_effect'>
+                <option value="top"<?php if ('top' == get_option('liveblogging_update_effect')) { ?> selected="selected"<?php } ?>><?php _e('The latest entry at the top', 'live-blogging'); ?></option>
+                <option value="bottom"<?php if ('bottom' == get_option('liveblogging_update_effect')) { ?> selected="selected"<?php } ?>><?php _e('The latest entry at the bottom', 'live-blogging'); ?></option>
+            </select></td>
+        </tr>
         
         <tr valign="top">
             <th scope="row"><label for="liveblogging_date_style"><?php _e('Date specifier for live blog entries (see <a href="http://uk3.php.net/manual/en/function.date.php">PHP\'s date function</a> for allowable strings)', 'live-blogging'); ?></label></th>
@@ -675,10 +691,12 @@ function live_blogging_shortcode($atts, $id = null)
                /*]]>*/
                </script>';
     }
+    
     $q = new WP_Query(array(
           'post_type' => 'liveblog_entry',
           'liveblog' => $id,
-          'posts_per_page' => -1
+          'posts_per_page' => -1,
+          'order' => ('bottom' == get_option('liveblogging_update_effect')) ? 'ASC' : 'DESC'
         ));
     $s .= '<div id="liveblog-' . $id . '">';
     while ($q->have_posts())

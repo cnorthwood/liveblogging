@@ -54,7 +54,14 @@ function live_blogging_handle_entry(entry)
         if (0 == jQuery(div_id).length)
         {
             // Entry doesn't already exist
-            jQuery('#liveblog-' + entry.liveblog).prepend('<div id="liveblog-entry-' + entry.id + '" style="display: none; position: absolute;">' + entry.html + '</div>');
+            if ('bottom' == live_blogging.update_effect)
+            {
+                jQuery('#liveblog-' + entry.liveblog).append('<div id="liveblog-entry-' + entry.id + '" style="display: none; position: absolute;">' + entry.html + '</div>');
+            }
+            else
+            {
+                jQuery('#liveblog-' + entry.liveblog).prepend('<div id="liveblog-entry-' + entry.id + '" style="display: none; position: absolute;">' + entry.html + '</div>');
+            }
             jQuery(div_id).fadeTo(0, 0,
               function () {
                   // now the element is in DOM we can ask how big it is with height()
