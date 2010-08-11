@@ -666,6 +666,7 @@ function live_blogging_shortcode($atts, $id = null)
         $id = $post->ID;
     }
     $s = '';
+    live_blogging_tweet_to_comment();
     if ('meteor' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog', true) == '1')
     {
         $s .= '<script type="text/javascript" src="http://' . get_option('liveblogging_meteor_host') . '/meteor.js"></script>
@@ -869,7 +870,59 @@ if (function_exists('curl_init'))
             }
         }
     }
+    
+    function live_blogging_tweet_to_comment()
+    {
+        if ('1' == get_option('liveblogging_enable_twitter'))
+        {
+            $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
+            foreach ($connection->get('statuses/mentions') as $tweet)
+            {
+                
+                // Get the entry this tweet refers to
+                $in_reply_to = $tweet->in_reply_to_status_id;
+                
+                // Check that we've not already inserted this comment
+                $comments = get_comments(array('author_email' => $tweet->id . '@twitter.com'));
+                
+                if (!empty($in_reply_to) && empty($comments))
+                {
+                    $query = new WP_Query(array(
+                        'meta_key' => '_liveblogging_tweeted',
+                        'meta_value' => $in_reply_to,
+                        'post_type' => 'liveblog_entry'
+                    ));
+                    while ($query->have_posts())
+                    {
+                        $query->next_post();
+                        // Get the post that this entry is in
+                        foreach (wp_get_object_terms(array($query->post->ID), 'liveblog') as $b)
+                        {
+                            // Insert comment
+                            wp_insert_comment(array(
+                                'comment_post_ID' => intval($b->name),
+                                'comment_author' => $tweet->user->name . ' (@' . $tweet->user->screen_name . ')',
+                                'comment_author_email' => $tweet->id . '@twitter.com',
+                                'comment_author_url' => 'http://twitter.com/' . $tweet->user->screen_name . '/status/' . $tweet->id,
+                                'comment_content' => $tweet->text,
+                                'user_id' => 0,
+                                'comment_agent' => 'Live Blogging for WordPress Twitter Importer',
+                                'comment_date' => strftime('Y-m-d H:i:s', strtotime($tweet->created_at)),
+                                'comment_approved' => 0
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+}
+else
+{
+    function live_blogging_tweet_to_comment()
+    {
+    }
 }
 
 // POLLING SUPPORT
