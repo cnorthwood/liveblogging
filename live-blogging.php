@@ -26,11 +26,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-/*
- For version 3.1:
- * @replying to a tweet from a live blog leaves a comment on that live blog
-*/
-
 //
 // BACK END
 //
@@ -144,6 +139,7 @@ function live_blogging_activate()
     {
         add_option('liveblogging_update_effect', 'top');
     }
+    wp_schedule_event($timestamp, 'live_blogging', 'live_blogging_check_twitter');
 }
 
 //
@@ -666,7 +662,6 @@ function live_blogging_shortcode($atts, $id = null)
         $id = $post->ID;
     }
     $s = '';
-    live_blogging_tweet_to_comment();
     if ('meteor' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog', true) == '1')
     {
         $s .= '<script type="text/javascript" src="http://' . get_option('liveblogging_meteor_host') . '/meteor.js"></script>
@@ -871,6 +866,7 @@ if (function_exists('curl_init'))
         }
     }
     
+    add_action('live_blogging_check_twitter', 'live_blogging_tweet_to_comment');
     function live_blogging_tweet_to_comment()
     {
         if ('1' == get_option('liveblogging_enable_twitter'))
@@ -918,14 +914,21 @@ if (function_exists('curl_init'))
     }
 
 }
-else
+
+// Custom schedule frequency
+add_filter('cron_schedules','live_blogging_schedule_frequency');
+function live_blogging_schedule_frequency($schedules)
 {
-    function live_blogging_tweet_to_comment()
-    {
-    }
+    $schedules['live_blogging'] = array(
+        'interval'=> 300,
+        'display'=>  __('Every 5 minutes', 'live-blogging')
+    );
+    return $schedules;
 }
 
+//
 // POLLING SUPPORT
+//
 function live_blogging_ajax()
 {
     header('Content-Type: application/json');

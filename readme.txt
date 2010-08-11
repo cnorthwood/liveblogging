@@ -178,6 +178,15 @@ boxes, and then red - allows you to remove a function from being unhooked.
 
 == Changelog ==
 
+= 2.1 =
+
+* Allow for new live blog updates to appear in ascending or descending order.
+* Import @replies to live blog tweets as comments to the live blog.
+* Allow the plugin to be loaded if the PHP CURL extension isn't (although
+  Twitter will be disabled).
+* After publishing a new entry, return to the new entry screen, rather than the
+  edit screen.
+
 = 2.0 =
 
 * Almost complete rewrite
