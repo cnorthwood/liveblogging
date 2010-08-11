@@ -31,6 +31,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  * @replying to a tweet from a live blog leaves a comment on that live blog
  * After publishing a new live blog entry, go back to the new entry screen
  * Optionally show live blog connection status
+ * Allow new updates to appear at the bottom, instead of the top
 */
 
 //
@@ -202,10 +203,14 @@ function live_blogging_options()
     
     <h3><?php _e('Posting to Twitter'); ?></h3>
     <table class="form-table">
-        
+<?php
+    if (function_exists('curl_init'))
+    {
+?>
         <tr valign="top">
             <th scope="row"><?php _e('Connect with Twitter', 'live-blogging'); ?></th>
-            <td><?php
+            <td>
+<?php
                 if (false !== get_option('liveblogging_twitter_token'))
                 {
                     _e('You are already connected to Twitter. Click the image below to change the account you are connected to.', 'live-blogging');
@@ -220,21 +225,35 @@ function live_blogging_options()
                 $request_token = $connection->getRequestToken(plugins_url('twittercallback.php', __FILE__));
                 update_option('liveblogging_twitter_request_token', $request_token['oauth_token']);
                 update_option('liveblogging_twitter_request_secret', $request_token['oauth_token_secret']);
-                if (200 == $connection->http_code) {
-                ?>
-                    <a href="<?php echo $connection->getAuthorizeURL($request_token['oauth_token']); ?>"><img src="<?php echo plugins_url('twitteroauth/signin.png', __FILE__); ?>" alt="Sign In with Twitter" /></a>
-                <?php } else { 
+                if (200 == $connection->http_code)
+                {
+                    echo '<a href="' . $connection->getAuthorizeURL($request_token['oauth_token']) . '"><img src="' . plugins_url('twitteroauth/signin.png', __FILE__) . '" alt="' . __('Connect with Twitter', 'live-blogging') . '" /></a>';
+                }
+                else
+                { 
                     _e('Unable to connect to Twitter at this time.', 'live-blogging');
-                } ?>
+                }
+?>
             </td>
         </tr>
-        
-<?php if (false !== get_option('liveblogging_twitter_token')) { ?>
+<?php
+        if (false !== get_option('liveblogging_twitter_token'))
+        {
+?>
         <tr valign="top">
             <th scope="row"><label for="liveblogging_enable_twitter"><?php _e('Enable posting to Twitter', 'live-blogging'); ?></label></th>
             <td><input type="checkbox" name="liveblogging_enable_twitter" value="1"<?php if ('1' == get_option('liveblogging_enable_twitter')) { ?> checked="checked"<?php } ?> /></td>
         </tr>
-<?php } ?>
+<?php
+        }
+    }
+    else
+    {
+?>
+        <tr><td colspan="2"><strong><em><?php _e('Twitter functionality disabled due to missing PHP CURL module'); ?></em></strong></td></tr>
+<?php
+    }
+?>
     
     </table>
     
@@ -772,42 +791,47 @@ if (!class_exists('TwitterOAuth'))
 define('LIVE_BLOGGING_TWITTER_CONSUMER_KEY', 'ToetcXqpSlUG8rObbnxwyA');
 define('LIVE_BLOGGING_TWITTER_CONSUMER_SECRET', 'JnkDixVMDuTA103zPQSRs9eWLzy1Lgv2E97h1q2GC4');
 
-add_action('publish_liveblog_entry', 'live_blogging_tweet', 10, 2);
-function live_blogging_tweet($id, $post)
+if (function_exists('curl_init'))
 {
-    if ('1' == get_option('liveblogging_enable_twitter') && '' == get_post_meta($id, '_liveblogging_tweeted', true))
-    {
-        $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
-        $content = filter_var($post->post_content, FILTER_SANITIZE_STRING);
-        if (strlen($content) > 140)
-        {
-            $tweet = $connection->post('statuses/update', array('status' => substr($content, 0, 139) . '…'));
-        }
-        else
-        {
-            $tweet = $connection->post('statuses/update', array('status' => $content));
-        }
-    }
-    if (isset($tweet->id))
-    {
-        update_post_meta($id, '_liveblogging_tweeted', $tweet->id);
-    }
-}
 
-add_action('delete_post', 'live_blogging_delete_tweet');
-add_action('trash_post', 'live_blogging_delete_tweet');
-function live_blogging_delete_tweet($id)
-{
-    $tweet = get_post_meta($id, '_liveblogging_tweeted', true);
-    if ('1' == get_option('liveblogging_enable_twitter') && '' != $tweet)
+    add_action('publish_liveblog_entry', 'live_blogging_tweet', 10, 2);
+    function live_blogging_tweet($id, $post)
     {
-        $post = get_post($id);
-        if ('liveblog_entry' == $post->post_type)
+        if ('1' == get_option('liveblogging_enable_twitter') && '' == get_post_meta($id, '_liveblogging_tweeted', true))
         {
             $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
-            $connection->post('statuses/destroy/' . $tweet);
+            $content = filter_var($post->post_content, FILTER_SANITIZE_STRING);
+            if (strlen($content) > 140)
+            {
+                $tweet = $connection->post('statuses/update', array('status' => substr($content, 0, 139) . '…'));
+            }
+            else
+            {
+                $tweet = $connection->post('statuses/update', array('status' => $content));
+            }
+        }
+        if (isset($tweet->id))
+        {
+            update_post_meta($id, '_liveblogging_tweeted', $tweet->id);
         }
     }
+    
+    add_action('delete_post', 'live_blogging_delete_tweet');
+    add_action('trash_post', 'live_blogging_delete_tweet');
+    function live_blogging_delete_tweet($id)
+    {
+        $tweet = get_post_meta($id, '_liveblogging_tweeted', true);
+        if ('1' == get_option('liveblogging_enable_twitter') && '' != $tweet)
+        {
+            $post = get_post($id);
+            if ('liveblog_entry' == $post->post_type)
+            {
+                $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
+                $connection->post('statuses/destroy/' . $tweet);
+            }
+        }
+    }
+
 }
 
 // POLLING SUPPORT
