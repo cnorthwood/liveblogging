@@ -29,7 +29,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 /*
  For version 3.1:
  * @replying to a tweet from a live blog leaves a comment on that live blog
- * After publishing a new live blog entry, go back to the new entry screen
  * Optionally show live blog connection status
  * Allow new updates to appear at the bottom, instead of the top
 */
@@ -475,6 +474,27 @@ function live_blogging_save_entry_meta($post_id)
     }
     
     wp_set_post_terms($post_id, $_POST['live_blogging_entry_post'], 'liveblog');
+}
+
+// Redirect new posts to the new post page
+add_filter('redirect_post_location', 'live_blogging_redirect', 10, 2);
+function live_blogging_redirect($location, $post_id)
+{
+    $url = explode('?', $location, 2);
+    $args = wp_parse_args($url[1]);
+    $url = explode('/', $url[0]);
+    $url = $url[count($url)-1];
+    
+    if ($url == 'post.php' && isset($_POST['publish']))
+    {
+        $post = get_post($post_id);
+        if ('liveblog_entry' == $post->post_type)
+        {
+            return 'post-new.php?post_type=liveblog_entry&message=' . $args['message'];
+        }
+    }
+    
+    return $location;
 }
 
 // Fix the title for live blogging entries to show the content (or at least
