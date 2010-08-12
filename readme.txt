@@ -178,6 +178,12 @@ boxes, and then red - allows you to remove a function from being unhooked.
 
 == Changelog ==
 
+= 2.1.1 =
+
+* Don't generate a warning when `the_title` filter gets called with only one
+  argument - simply disable processing of the title in this case (this should
+  only affect plugins doing things in an old-fashioned way).
+
 = 2.1 =
 
 * Allow for new live blog updates to appear in ascending or descending order.
