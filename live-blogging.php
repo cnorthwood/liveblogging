@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.1
+Version: 2.1.1
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -512,10 +512,10 @@ function live_blogging_redirect($location, $post_id)
 // Fix the title for live blogging entries to show the content (or at least
 // it's excerpt)
 add_filter('the_title', 'live_blogging_fix_title', 10, 2);
-function live_blogging_fix_title($title, $id)
+function live_blogging_fix_title($title, $id = 0)
 {
     $post = get_post($id);
-    if ('liveblog_entry' == $post->post_type)
+    if ($id != 0 && 'liveblog_entry' == $post->post_type)
     {
         $title = filter_var($post->post_content, FILTER_SANITIZE_STRING);
         if (strlen($title) > 140)
