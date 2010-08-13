@@ -178,6 +178,11 @@ boxes, and then red - allows you to remove a function from being unhooked.
 
 == Changelog ==
 
+= 2.1.2 =
+
+* Add scheduled Twitter job when upgrading
+* Correctly parse date from tweets when importing comments
+
 = 2.1.1 =
 
 * Don't generate a warning when `the_title` filter gets called with only one
