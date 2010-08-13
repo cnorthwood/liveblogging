@@ -24,8 +24,6 @@ require('../../../wp-blog-header.php');
 $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_request_token'), get_option('liveblogging_twitter_request_secret'));
 $access_token = $connection->getAccessToken($_REQUEST['oauth_verifier']);
 
-var_dump($connection->http_info);
-
 update_option('liveblogging_twitter_token', $access_token['oauth_token']);
 update_option('liveblogging_twitter_secret', $access_token['oauth_token_secret']);
 update_option('liveblogging_enable_twitter', '1');

@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.1.1
+Version: 2.1.2
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -80,6 +80,11 @@ function live_blogging_init()
         add_action('wp_ajax_nopriv_live_blogging_poll', 'live_blogging_ajax');
     }
     
+    if (false === wp_get_schedule('live_blogging_check_twitter'))
+    {
+        wp_schedule_event($timestamp, 'live_blogging', 'live_blogging_check_twitter');
+    }
+    
 }
 
 // Register settings for the settings API
@@ -140,6 +145,12 @@ function live_blogging_activate()
         add_option('liveblogging_update_effect', 'top');
     }
     wp_schedule_event($timestamp, 'live_blogging', 'live_blogging_check_twitter');
+}
+
+register_deactivation_hook(__FILE__, 'live_blogging_deactivate');
+function live_blogging_deactivate()
+{
+    wp_clear_scheduled_hook('live_blogging_check_twitter');
 }
 
 //
@@ -447,8 +458,10 @@ function live_blogging_entry_meta()
     // Error if there are no live blogs
     if (count($lblogs) == 0)
     {
-        wp_die('<p>' . __('There are no currently active live blogs.', 'live-blogging') . '</p>');
+        echo '<p>' . __('There are no currently active live blogs.', 'live-blogging') . '</p>';
     }
+    else
+    {
 ?>
 
   <label for="live_blogging_entry_post"><?php _e('Select live blog', 'live-blogging' ); ?></label><br/>
@@ -458,6 +471,7 @@ function live_blogging_entry_meta()
     <?php } ?>
   </select>
 <?php
+    }
 }
 
 // Entry page meta saving
@@ -482,6 +496,7 @@ function live_blogging_save_entry_meta($post_id)
     
     if (!isset($_POST['live_blogging_entry_post']))
     {
+        wp_delete_post($post_id, true);
         wp_die('<p>' . __('There are no currently active live blogs.', 'live-blogging') . '</p>');
     }
     
@@ -903,7 +918,7 @@ if (function_exists('curl_init'))
                                 'comment_content' => $tweet->text,
                                 'user_id' => 0,
                                 'comment_agent' => 'Live Blogging for WordPress Twitter Importer',
-                                'comment_date' => strftime('Y-m-d H:i:s', strtotime($tweet->created_at)),
+                                'comment_date' => strftime('%Y-%m-%d %H:%M:%S', strtotime($tweet->created_at)),
                                 'comment_approved' => 0
                             ));
                         }
