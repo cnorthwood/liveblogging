@@ -178,6 +178,10 @@ boxes, and then red - allows you to remove a function from being unhooked.
 
 == Changelog ==
 
+= 2.1.3 =
+
+* Add Chinese translation by Haoxian Zeng
+
 = 2.1.2 =
 
 * Add scheduled Twitter job when upgrading
@@ -226,3 +230,9 @@ boxes, and then red - allows you to remove a function from being unhooked.
 2.0 is a MAJOR upgrade to the 1.x series. Please sure you read the section about
 upgrading in the readme fully to ensure your old live blogs are migrated to Live
 Blogging v2.
+
+== Credits ==
+
+= Internationalisation =
+
+* Chinese language: Haoxian Zeng

@@ -47,17 +47,17 @@ function live_blogging_init()
     register_post_type('liveblog_entry',
                        array(
                         'labels' => array(
-                            'name' => __('Live Blog Entries', 'live_blogging'),
-                            'singular_name' => __('Live Blog Entry', 'live_blogging'),
-                            'add_new_item' => __('Add New Entry', 'live_blogging'),
-                            'edit_item' => __('Edit Entry', 'live_blogging'),
-                            'new_item' => __('New Entry', 'live_blogging'),
-                            'view_item' => __('Edit Entry', 'live_blogging'),
-                            'search_items' => __('Search Entries', 'live_blogging'),
-                            'not_found' => __('No entries found', 'live_blogging'),
-                            'not_found_in_trash' => __('No entries found in trash', 'live_blogging')
+                            'name' => __('Live Blog Entries', 'live-blogging'),
+                            'singular_name' => __('Live Blog Entry', 'live-blogging'),
+                            'add_new_item' => __('Add New Entry', 'live-blogging'),
+                            'edit_item' => __('Edit Entry', 'live-blogging'),
+                            'new_item' => __('New Entry', 'live-blogging'),
+                            'view_item' => __('Edit Entry', 'live-blogging'),
+                            'search_items' => __('Search Entries', 'live-blogging'),
+                            'not_found' => __('No entries found', 'live-blogging'),
+                            'not_found_in_trash' => __('No entries found in trash', 'live-blogging')
                         ),
-                        'description' => __('Individual entries for a live blog', 'live_blogging'),
+                        'description' => __('Individual entries for a live blog', 'live-blogging'),
                         'show_ui' => true,
                         'supports' => array('editor', 'author'),
                         'taxonomies' => array('liveblog'),
@@ -196,7 +196,7 @@ function live_blogging_options()
 
 <form method="post" action="options.php">
     <?php settings_fields( 'live-blogging' ); ?>
-    <h3><?php _e('Automatic Updating'); ?></h3>
+    <h3><?php _e('Automatic Updating', 'live-blogging'); ?></h3>
     <table class="form-table">
         
         <tr valign="top">
@@ -215,7 +215,7 @@ function live_blogging_options()
     
     </table>
     
-    <h3><?php _e('Posting to Twitter'); ?></h3>
+    <h3><?php _e('Posting to Twitter', 'live-blogging'); ?></h3>
     <table class="form-table">
 <?php
     if (function_exists('curl_init'))
@@ -264,14 +264,14 @@ function live_blogging_options()
     else
     {
 ?>
-        <tr><td colspan="2"><strong><em><?php _e('Twitter functionality disabled due to missing PHP CURL module'); ?></em></strong></td></tr>
+        <tr><td colspan="2"><strong><em><?php _e('Twitter functionality disabled due to missing PHP CURL module', 'live-blogging'); ?></em></strong></td></tr>
 <?php
     }
 ?>
     
     </table>
     
-    <h3><?php _e('Live Blog Style'); ?></h3>
+    <h3><?php _e('Live Blog Style', 'live-blogging'); ?></h3>
     <table class="form-table">
         
         <tr valign="top">
@@ -294,7 +294,7 @@ function live_blogging_options()
     
     </table>
     
-    <h3><?php _e('Meteor Configuration'); ?></h3>
+    <h3><?php _e('Meteor Configuration', 'live-blogging'); ?></h3>
     <table class="form-table">
         <tr valign="top">
             <th scope="row"><label for="liveblogging_meteor_host"><?php _e('Meteor Subscriber Host (the publicly accessible URL of your Meteor server - can be left blank if not using Meteor)', 'live-blogging'); ?></label></th>
@@ -318,7 +318,7 @@ function live_blogging_options()
     
     </table>
     
-    <h3><?php _e('Advanced Settings'); ?></h3>
+    <h3><?php _e('Advanced Settings', 'live-blogging'); ?></h3>
     <table class="form-table">
         
         <tr valign="top">
@@ -1044,8 +1044,8 @@ function live_blogging_migrate()
 ?>
     <form method="post" action="tools.php?page=live-blogging-upgrade">
         <?php wp_nonce_field('live-blogging-upgrade'); ?>
-        <p><label for="live_blogging_start_migration"><?php _e('Click the button below to upgrade legacy live blogs to the new system. To avoid timeout errors, only 25 entries at a time will be translated. For blogs with large numbers of live blog entries, it may be necessary to run this multiple times to convert them all.', 'live_blogging'); ?></label></p>
-        <p><input type="submit" class="button-primary" name="live_blogging_start_migration" value="<?php _e('Start') ?>" /></p>
+        <p><label for="live_blogging_start_migration"><?php _e('Click the button below to upgrade legacy live blogs to the new system. To avoid timeout errors, only 25 entries at a time will be translated. For blogs with large numbers of live blog entries, it may be necessary to run this multiple times to convert them all.', 'live-blogging'); ?></label></p>
+        <p><input type="submit" class="button-primary" name="live_blogging_start_migration" value="<?php _e('Start', 'live-blogging') ?>" /></p>
     </form>
 <?php
     }
@@ -1093,7 +1093,7 @@ function live_blogging_do_migrate()
     <p><?php printf(_n("%d entry left to migrate", "%d entries left to migrate.", $num_left, 'live-blogging'), $num_left); ?></p>
     <form method="post" action="tools.php?page=live-blogging-upgrade">
         <?php wp_nonce_field('live-blogging-upgrade'); ?>
-        <p><input type="submit" class="button-primary" id="live-blogging-continue-migration" name="live_blogging_start_migration" value="<?php _e('Next batch') ?>" /></p>
+        <p><input type="submit" class="button-primary" id="live-blogging-continue-migration" name="live_blogging_start_migration" value="<?php _e('Next batch', 'live-blogging') ?>" /></p>
         <script type="text/javascript">
         /*<![CDATA[ */
             jQuery(function(){
@@ -1126,7 +1126,7 @@ function live_blogging_do_migrate()
             <p><?php printf(_n("%d description left to migrate", "%d descriptions left to migrate.", $num_left, 'live-blogging'), $num_left); ?></p>
             <form method="post" action="tools.php?page=live-blogging-upgrade">
                 <?php wp_nonce_field('live-blogging-upgrade'); ?>
-                <p><input type="submit" class="button-primary" id="live-blogging-continue-migration" name="live_blogging_start_migration" value="<?php _e('Next batch') ?>" /></p>
+                <p><input type="submit" class="button-primary" id="live-blogging-continue-migration" name="live_blogging_start_migration" value="<?php _e('Next batch', 'live-blogging') ?>" /></p>
                 <script type="text/javascript">
                 /*<![CDATA[ */
                     jQuery(function(){
