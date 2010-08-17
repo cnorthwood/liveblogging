@@ -178,6 +178,12 @@ boxes, and then red - allows you to remove a function from being unhooked.
 
 == Changelog ==
 
+= 2.1.4 =
+
+* Offset imported tweets as comments dates with the configured GMT offset
+* Import tweets to comments now uses the default approval status for comments as
+  configured in your normal WordPress install
+
 = 2.1.3 =
 
 * Add Chinese translation by Haoxian Zeng
