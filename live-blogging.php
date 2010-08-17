@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.1.3
+Version: 2.1.4
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -918,8 +918,8 @@ if (function_exists('curl_init'))
                                 'comment_content' => $tweet->text,
                                 'user_id' => 0,
                                 'comment_agent' => 'Live Blogging for WordPress Twitter Importer',
-                                'comment_date' => strftime('%Y-%m-%d %H:%M:%S', strtotime($tweet->created_at)),
-                                'comment_approved' => 0
+                                'comment_date' => strftime('%Y-%m-%d %H:%M:%S', strtotime($tweet->created_at) + (get_option( 'gmt_offset' ) * 3600)),
+                                'comment_approved' => (get_option('comment_moderation') == 1) ? 0 : 1
                             ));
                         }
                     }
