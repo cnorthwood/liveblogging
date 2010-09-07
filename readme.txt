@@ -178,6 +178,11 @@ boxes, and then red - allows you to remove a function from being unhooked.
 
 == Changelog ==
 
+= 2.1.5 =
+
+* Add support for embedding live blogs on pages
+* Add Persian translation by Rasoul Moshrefizadeh
+
 = 2.1.4 =
 
 * Offset imported tweets as comments dates with the configured GMT offset
@@ -242,3 +247,4 @@ Blogging v2.
 = Internationalisation =
 
 * Chinese language: Haoxian Zeng
+* Persian language: Rasoul Moshrefizadeh

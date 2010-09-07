@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.1.4
+Version: 2.1.5
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -171,6 +171,7 @@ function live_blogging_add_menu()
         add_submenu_page('index.php', __('Meteor Status', 'live-blogging'), __('Meteor Status', 'live-blogging'), 'manage_options', 'live-blogging-meteor-status', 'live_blogging_meteor_status');
     }
     add_meta_box('live_blogging_post_enable', __('Enable Live Blog', 'live-blogging'), 'live_blogging_post_meta', 'post', 'side');
+    add_meta_box('live_blogging_post_enable', __('Enable Live Blog', 'live-blogging'), 'live_blogging_post_meta', 'page', 'side');
     add_meta_box('live_blogging_post_select', __('Select Live Blog', 'live-blogging'), 'live_blogging_entry_meta', 'liveblog_entry', 'side');
 }
 
@@ -398,6 +399,7 @@ function live_blogging_post_meta()
 
 // Post page metabox saving
 add_action('save_post', 'live_blogging_save_post_meta');
+add_action('save_page', 'live_blogging_save_post_meta');
 function live_blogging_save_post_meta($post_id)
 {
     // Check for autosaves
@@ -432,10 +434,26 @@ function live_blogging_entry_meta()
     global $post;
     wp_nonce_field('live_blogging_entry_meta', 'live_blogging_entry_nonce');
     $lblogs = array();
+    // Query posts
     $q = new WP_Query(array(
             'meta_key' => '_liveblog',
             'meta_value' => '1',
             'post_type' => 'post',
+            'posts_per_page' => -1
+          ));
+    
+    // Get all active live blogs
+    while ($q->have_posts())
+    {
+        $q->next_post();
+        $lblogs[$q->post->ID] = esc_attr($q->post->post_title);
+    }
+    
+    // Query pages
+    $q = new WP_Query(array(
+            'meta_key' => '_liveblog',
+            'meta_value' => '1',
+            'post_type' => 'page',
             'posts_per_page' => -1
           ));
     
