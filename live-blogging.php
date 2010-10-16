@@ -870,7 +870,7 @@ if (function_exists('curl_init'))
             $content = filter_var($post->post_content, FILTER_SANITIZE_STRING);
             if (strlen($content) > 140)
             {
-                $tweet = $connection->post('statuses/update', array('status' => substr($content, 0, 139) . '…'));
+                $tweet = $connection->post('statuses/update', array('status' => substr($content, 0, 139) . html_entity_decode('&hellip;', ENT_COMPAT, 'UTF-8')));
             }
             else
             {
