@@ -392,7 +392,7 @@ function live_blogging_post_meta()
     live_blogging_legacy_exists();
 ?>
 
-  <p><input type="checkbox" name="live_blogging_post_enable" value="enabled"<?php echo $checked; ?> /><label for="live_blogging_post_enable"><?php _e('Enable live blogging on this post', 'live-blogging' ); ?></label></p>
+  <p><input type="checkbox" id="live_blogging_post_enable" name="live_blogging_post_enable" value="enabled"<?php echo $checked; ?> /> <label for="live_blogging_post_enable"><?php _e('Enable live blogging on this post', 'live-blogging' ); ?></label></p>
   <p><em><?php _e('Please remember to include the [liveblog] shortcode where you want the liveblog in this post to appear.', 'live-blogging'); ?></em></p>
 <?php
 }
@@ -483,7 +483,7 @@ function live_blogging_entry_meta()
 ?>
 
   <label for="live_blogging_entry_post"><?php _e('Select live blog', 'live-blogging' ); ?></label><br/>
-  <select name="live_blogging_entry_post">
+  <select id="live_blogging_entry_post" name="live_blogging_entry_post">
     <?php foreach ($lblogs as $lbid => $lbname) { ?>
         <option value="<?php echo $lbid; ?>"><?php echo $lbname; ?></option>
     <?php } ?>
