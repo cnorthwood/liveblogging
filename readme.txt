@@ -178,6 +178,10 @@ boxes, and then red - allows you to remove a function from being unhooked.
 
 == Changelog ==
 
+= 2.1.6 =
+
+* Some small fixes to form accessibility
+
 = 2.1.5 =
 
 * Add support for embedding live blogs on pages

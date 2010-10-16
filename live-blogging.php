@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.1.5
+Version: 2.1.6
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -392,7 +392,7 @@ function live_blogging_post_meta()
     live_blogging_legacy_exists();
 ?>
 
-  <p><input type="checkbox" id="live_blogging_post_enable" name="live_blogging_post_enable" value="enabled"<?php echo $checked; ?> /> <label for="live_blogging_post_enable"><?php _e('Enable live blogging on this post', 'live-blogging' ); ?></label></p>
+  <p><input type="checkbox" id="live_blogging_post_enable_box" name="live_blogging_post_enable" value="enabled"<?php echo $checked; ?> /> <label for="live_blogging_post_enable_box"><?php _e('Enable live blogging on this post', 'live-blogging' ); ?></label></p>
   <p><em><?php _e('Please remember to include the [liveblog] shortcode where you want the liveblog in this post to appear.', 'live-blogging'); ?></em></p>
 <?php
 }
