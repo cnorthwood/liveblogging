@@ -181,6 +181,8 @@ boxes, and then red - allows you to remove a function from being unhooked.
 = 2.1.6 =
 
 * Some small fixes to form accessibility
+* Correct ellipsis Unicode encoding that was stopping long entries being posted
+  to Twitter
 
 = 2.1.5 =
 
