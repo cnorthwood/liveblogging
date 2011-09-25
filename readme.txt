@@ -2,7 +2,7 @@
 Contributors: chrisnorthwood
 Tags: live, micro, JavaScript, blogging, event, automatic updating, auto updating
 Requires at least: 3.0
-Tested up to: 3.0.1
+Tested up to: 3.2.1
 Stable tag: 2.1.7
 
 Live Blogging is a plugin that allows you to insert micro/live blogs into posts
@@ -87,6 +87,10 @@ all your old entries to the new version.
 
 Please note that live blogs created in previous versions of the software can
 not have new entries added to them.
+
+Please note that it is recommended that you disable posting to Twitter when
+running a migration, as the migration will cause all legacy entries to be
+posted to Twitter.
 
 = If I change the time on a live blog entry to appear in the past, then it doesn't appear in the right order during automatic updating? =
 
@@ -177,6 +181,16 @@ boxes, and then red - allows you to remove a function from being unhooked.
 
 
 == Changelog ==
+
+= 2.2 =
+
+* Added support for WordPress 3.2
+
+The following features comes thanks to a patch from Gabriel Koen and Corey Gilmore.
+
+* Added a new 'timed' update method, which refreshes the whole page
+* Update the admin experience
+* Twitter comment updating now only works when Twitter posting is enabled
 
 = 2.1.7 =
 

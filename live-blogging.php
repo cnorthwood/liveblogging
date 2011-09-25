@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.1.7
+Version: 2.2
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -413,7 +413,7 @@ function live_blogging_post_meta()
     global $post;
     wp_nonce_field('live_blogging_post_meta', 'live_blogging_post_nonce');
     $checked = '';
-    if (get_post_meta($post->ID, '_liveblog', true) == '1')
+    if (get_post_meta($post->ID, '_liveblog_active', true) == '1')
     {
         $checked = ' checked="checked"';
     }
@@ -446,13 +446,23 @@ function live_blogging_save_post_meta($post_id)
         return $post_id;
     }
     
-    if (isset($_POST['live_blogging_post_enable']) && 'enabled' == $_POST['live_blogging_post_enable'])
+    // Check for liveblog shortcode
+    if (preg_match('/\[liveblog\]/ism', $_POST['post_content']))
     {
         update_post_meta($post_id, '_liveblog', '1');
     }
     else
     {
         update_post_meta($post_id, '_liveblog', '0');
+    }
+    
+    if (isset($_POST['live_blogging_post_enable']) && 'enabled' == $_POST['live_blogging_post_enable'])
+    {
+        update_post_meta($post_id, '_liveblog_active', '1');
+    }
+    else
+    {
+        update_post_meta($post_id, '_liveblog_active', '0');
     }
 }
 
@@ -970,7 +980,7 @@ function live_blogging_shortcode($atts, $id = null)
         $id = $post->ID;
     }
     $s = '';
-    if ('meteor' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog', true) == '1')
+    if ('meteor' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog_active', true) == '1')
     {
         $s .= '<script type="text/javascript" src="http://' . get_option('liveblogging_meteor_host') . '/meteor.js"></script>
                <script type="text/javascript">
@@ -987,7 +997,7 @@ function live_blogging_shortcode($atts, $id = null)
                /*]]>*/
                </script>';
     }
-    elseif ('poll' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog', true) == '1')
+    elseif ('poll' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog_active', true) == '1')
     {
         $s .= '<script type="text/javascript">
                /*<![CDATA[ */
@@ -995,7 +1005,7 @@ function live_blogging_shortcode($atts, $id = null)
                /*]]>*/
                </script>';
     }
-    elseif ('timed' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog', true) == '1')
+    elseif ('timed' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog_active', true) == '1')
     {
         $s .= '<script type="text/javascript">
                /*<![CDATA[ */
