@@ -434,6 +434,24 @@ function live_blogging_save_post_meta($post_id)
     }
 }
 
+// Insert live blog button on rich editor
+function live_blogging_insert_liveblog_button($context) {
+    $additional = '<a style="cursor:pointer;" onclick="live_blog_insert_shortcode();">Live Blog</a>';
+    return $context . $additional;
+}
+add_action('media_buttons_context', 'live_blogging_insert_liveblog_button');
+
+function live_blogging_shortcode_insert_button() { ?>
+        <script type="text/javascript">
+            function live_blog_insert_shortcode() {
+                var win = window.dialogArguments || opener || parent || top;
+                win.send_to_editor("[liveblog]");
+            }
+        </script>
+<?php
+}
+add_action('admin_head', 'live_blogging_shortcode_insert_button');
+
 // Meta box on entry page
 function live_blogging_entry_meta()
 {
@@ -526,6 +544,223 @@ function live_blogging_save_entry_meta($post_id)
     
     wp_set_post_terms($post_id, $_POST['live_blogging_entry_post'], 'liveblog');
 }
+
+if (is_admin()) {
+    
+    function is_liveblog_edit_post()
+    {
+        if (!is_admin())
+        {
+            return false;
+        }
+        elseif (strpos($_SERVER['REQUEST_URI'], 'post-new.php') !== false && 'liveblog_entry' == $_GET['post_type'])
+        {
+            return true;
+        }
+        elseif ( strpos($_SERVER['REQUEST_URI'], 'post.php') !== false )
+        {
+            if ('liveblog_entry' == $GLOBALS['post']->post_type)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function live_blogging_admin_js()
+    {
+        if (is_liveblog_edit_post())
+        { ?>
+            <script type="text/javascript">/*<![CDATA[ */
+                jQuery(document).ready(function(){
+                    // Add title to New Entry box
+                    jQuery("div#quicktags").html("<h3 class=\"hndle\"><span>New Entry</span></h3>");
+                    
+                    // Allow image uploads
+                    jQuery("form#post").attr("enctype", "multipart/form-data");
+                    // Publish the post on image upload click
+                    jQuery("input#quick-image-upload").click(function(){
+                        jQuery("input#publish").click();
+                        return false;
+                    });
+                    
+                    // Get current posts (default entry)
+                    live_blogging_update_chatbox();
+                });
+                
+                function get_selected_liveblog_post_id() {
+                        var liveblog_selector = document.getElementById("live_blogging_entry_post");
+                        var liveblog_id = liveblog_selector.options[liveblog_selector.selectedIndex].value;
+                        return liveblog_id;
+                }
+                
+                function live_blogging_update_chatbox() {
+                    jQuery.post(
+                            "<?php echo admin_url('admin-ajax.php'); ?>",
+                            {
+                                    action: "live_blogging_update_chatbox",
+                                    liveblog_id: get_selected_liveblog_post_id()
+                            },
+                            function(response) {
+                                    entries = JSON.parse(response);
+                                    jQuery("#live_blogging_chatbox .inside").html(entries)
+                            },
+                            'application/json'
+                    )
+                    setTimeout(live_blogging_update_chatbox, 10000);
+                }
+            /*]]>*/</script>
+<?php   }
+    }
+    add_action('admin_head', 'live_blogging_admin_js');
+
+    /**
+     * Overloading a filter to remove the "Post saved" message
+     */
+    function live_blogging_remove_messages($messages) {
+            if ( is_liveblog_edit_post() ) {
+                    if ( isset($_GET['message']) && 6 == $_GET['message'] ) {
+                            unset($_GET['message']);
+                    }
+            }
+            return $messages;
+    }
+    add_filter('post_updated_messages', 'live_blogging_remove_messages');
+
+    function live_blogging_quick_upload()
+    {
+?>
+            <p id="async-upload-wrap">
+                <label class="screen-reader-text" for="async-upload">Upload</label>
+                <input type="file" name="async-upload" id="async-upload"> <input type="submit" class="button" name="html-upload" id="quick-image-upload" value="Upload">
+            </p>
+<?php
+    }
+
+    // Post saving
+    /**
+     * Run on_post_edit actions against the parent post.  This is primarily to trigger W3TC's clear page cache.
+     * Only needs to run if polling is disabled, since polling updates the post content via ajax.
+     */
+    function live_blogging_do_edit_post($data) {
+            if ( is_liveblog_edit_post() && 'disabled' === get_option('liveblogging_method')) {
+                    $parent_post_id = (int)$_POST['live_blogging_entry_post'];
+                    $parent_post = get_post($parent_post_id);
+                    do_action('edit_post', $parent_post_id, $parent_post);
+            }
+            return $data;
+    }
+    add_filter('wp_insert_post_data', 'live_blogging_do_edit_post', 10, 1);
+
+    function live_blogging_save_upload($data, $postarr)
+    {
+        // Check for autosaves
+        if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE))
+        {
+            return $data;
+        }
+        if (is_liveblog_edit_post() && $_FILES)
+        {
+            $file = wp_handle_upload($_FILES['async-upload'], array('action' => 'editpost'));
+            if (isset( $file['file'] ) && !is_wp_error($file))
+            {
+                $name = $_FILES['async-upload']['name'];
+                
+                $name_parts = pathinfo($name);
+                $name = trim( substr( $name, 0, -(1 + strlen($name_parts['extension'])) ) );
+                
+                $url = $file['url'];
+                $type = $file['type'];
+                $file = $file['file'];
+                $title = $name;
+                $content = '';
+                
+                // use image exif/iptc data for title and caption defaults if possible
+                if ($image_meta = @wp_read_image_metadata($file))
+                {
+                    if (trim($image_meta['title']) && !is_numeric(sanitize_title($image_meta['title'])))
+                    {
+                        $title = $image_meta['title'];
+                    }
+                    if (trim($image_meta['caption']))
+                    {
+                        $content = $image_meta['caption'];
+                    }
+                }
+                
+                // Construct the attachment array
+                $attachment = array(
+                        'post_mime_type' => $type,
+                        'guid' => $url,
+                        'post_parent' => (int)$_POST['live_blogging_entry_post'],
+                        'post_title' => $title,
+                        'post_content' => $content,
+                );
+                
+                // Save the data
+                $id = wp_insert_attachment($attachment, $file, (int)$_POST['live_blogging_entry_post']);
+                if ( !is_wp_error($id) ) {
+                        wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file ) );
+                }
+                
+                // Add the image to the post
+                $data['post_content'] .= '<div class="liveblog-image">' . wp_get_attachment_image($id, 'large') . '</div>';
+            }
+        }
+        return $data;
+    }
+    add_filter('wp_insert_post_data', 'live_blogging_save_upload', 10, 2);
+
+    function live_blogging_chatbox() {
+        if (!isset($_GET['live_blogging_entry_post']))
+        {
+            return;
+        }
+        $liveblog_id = (int)$_GET['live_blogging_entry_post'];
+        $liveblog_sort = 'ASC';
+        $output = live_blog_chatbox_get_posts($liveblog_id, $liveblog_sort);
+        echo $output;
+    }
+
+    function live_blog_chatbox_get_posts($liveblog_id, $liveblog_sort = 'DESC')
+    {
+        $liveblog = new WP_Query(array(
+            'post_type' => 'liveblog_entry',
+            'liveblog' => $liveblog_id,
+            'posts_per_page' => -1,
+            'orderby' => 'date',
+            'order' => $liveblog_sort
+        ));
+        $output = '';
+        if ($liveblog->have_posts())
+        {
+            $output .= '<div class="liveblog-entries">';
+            while ($liveblog->have_posts())
+            {
+                $liveblog->next_post();
+                $output .= '<div id="liveblog-entry-' . $liveblog->post->ID . '">' . live_blogging_get_entry($liveblog->post) . '</div>';
+            }
+            $output .= '</div>';
+        }
+        return $output;
+    }
+
+    function live_blogging_update_chatbox() {
+        header('Content-Type: application/json');
+        if (!isset($_POST['liveblog_id']))
+        {
+            die();
+        }
+        $liveblog_id = (int)$_POST['liveblog_id'];
+        $liveblog_sort = 'DESC';
+        $response = live_blog_chatbox_get_posts($liveblog_id);
+        echo json_encode($response);
+        die();
+    }
+    add_action('wp_ajax_live_blogging_update_chatbox', 'live_blogging_update_chatbox');
+
+}
+
 
 // Redirect new posts to the new post page
 add_filter('redirect_post_location', 'live_blogging_redirect', 10, 2);
