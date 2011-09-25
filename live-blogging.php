@@ -109,6 +109,7 @@ function live_blogging_register_settings()
     register_setting('live-blogging', 'liveblogging_id');
     register_setting('live-blogging', 'liveblogging_unhooks');
     register_setting('live-blogging', 'liveblogging_update_effect');
+    register_setting('live-blogging', 'liveblogging_timed_update_freq', 'live_blogging_sanitize_timed_updates');
 }
 
 function live_blogging_sanitise_method($input)
@@ -117,11 +118,23 @@ function live_blogging_sanitise_method($input)
     {
         case 'poll':
         case 'meteor':
+        case 'timed':
         case 'disabled':
             return $input;
         default:
             return 'disabled';
     }
+}
+
+/**
+ * Sanitize the value for timed updates and ensure reasonable max/min values.
+ *
+ * @param mixed $input value in seconds between page refreshes
+ * @return int $return value in seconds
+ *
+*/
+function live_blogging_sanitize_timed_updates($input) {
+    return abs(round(intval($input)));
 }
 
 register_activation_hook(__FILE__, 'live_blogging_activate');
@@ -211,6 +224,7 @@ function live_blogging_options()
             <td><select name='liveblogging_method'>
                 <option value="poll"<?php if ('poll' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Poll (default, requires no special configuration)', 'live-blogging'); ?></option>
                 <option value="meteor"<?php if ('meteor' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Stream using Meteor (lower server load and faster updates, but needs special configuration)', 'live-blogging'); ?></option>
+                <option value="timed"<?php if ('timed' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Do a full page refresh every X seconds', 'live-blogging'); ?></option>
                 <option value="disabled"<?php if ('disabled' == get_option('liveblogging_method')) { ?> selected="selected"<?php } ?>><?php _e('Disable automatic updates', 'live-blogging'); ?></option>
             </select></td>
         </tr>
@@ -218,6 +232,11 @@ function live_blogging_options()
         <tr valign="top">
             <th scope="row"><label for="liveblogging_comments"><?php _e('Enable auto-updating of comments (this will not work on some themes, please read the documentation!)', 'live-blogging'); ?></label></th>
             <td><input type="checkbox" name="liveblogging_comments" value="1"<?php if ('1' == get_option('liveblogging_comments')) { ?> checked="checked"<?php } ?> /></td>
+        </tr>
+        
+        <tr valign="top">
+            <th scope="row"><label for="liveblogging_timed_update_freq"><?php _e('Number of seconds between page refreshes (min 15, max 180) in timed update mode', 'live-blogging'); ?></label></th>
+            <td><input type="text" name="liveblogging_timed_update_freq" value="<?php echo esc_attr(get_option('liveblogging_timed_update_freq', 25)); ?>" /></td>
         </tr>
     
     </table>
@@ -958,6 +977,14 @@ function live_blogging_shortcode($atts, $id = null)
         $s .= '<script type="text/javascript">
                /*<![CDATA[ */
                 setTimeout(live_blogging_poll, 15000, "' . $id . '")
+               /*]]>*/
+               </script>';
+    }
+    elseif ('timed' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog', true) == '1')
+    {
+        $s .= '<script type="text/javascript">
+               /*<![CDATA[ */
+                setTimeout(function(){window.location.href=window.location.href}, ' . esc_attr(get_option('liveblogging_timed_update_freq', 25)) * 1000 . ';
                /*]]>*/
                </script>';
     }
