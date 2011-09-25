@@ -192,6 +192,9 @@ function live_blogging_add_menu()
     add_meta_box('live_blogging_post_enable', __('Enable Live Blog', 'live-blogging'), 'live_blogging_post_meta', 'post', 'side');
     add_meta_box('live_blogging_post_enable', __('Enable Live Blog', 'live-blogging'), 'live_blogging_post_meta', 'page', 'side');
     add_meta_box('live_blogging_post_select', __('Select Live Blog', 'live-blogging'), 'live_blogging_entry_meta', 'liveblog_entry', 'side');
+    add_meta_box('live_blogging_chatbox', __('Entries', 'live-blogging'), 'live_blogging_chatbox', 'liveblog_entry', 'normal');
+    add_meta_box('live_blogging_quick_upload', __('Upload Image', 'live-blogging'), 'live_blogging_quick_upload', 'liveblog_entry', 'side');
+
 }
 
 // Handle the options page, using the Settings API
@@ -482,7 +485,9 @@ function live_blogging_entry_meta()
             'meta_key' => '_liveblog',
             'meta_value' => '1',
             'post_type' => 'post',
-            'posts_per_page' => -1
+            'posts_per_page' => -1,
+            'orderby' => 'date',
+            'order' => 'DESC'
           ));
     
     // Get all active live blogs
@@ -497,7 +502,9 @@ function live_blogging_entry_meta()
             'meta_key' => '_liveblog',
             'meta_value' => '1',
             'post_type' => 'page',
-            'posts_per_page' => -1
+            'posts_per_page' => -1,
+            'orderby' => 'date',
+            'order' => 'DESC'
           ));
     
     // Get all active live blogs
@@ -505,6 +512,12 @@ function live_blogging_entry_meta()
     {
         $q->next_post();
         $lblogs[$q->post->ID] = esc_attr($q->post->post_title);
+    }
+    
+    // Try and post to the last live blog that was posted to
+    if (isset($_GET['live_blogging_entry_post']))
+    {
+    	$active_id = (int)$_GET['live_blogging_entry_post'];
     }
     
     // Add the current live blog, always
@@ -523,12 +536,14 @@ function live_blogging_entry_meta()
     }
     else
     {
+    	// Sort by key in reverse order, puts the more recent items at the top of the list
+    	krsort($lblogs);
 ?>
 
   <label for="live_blogging_entry_post"><?php _e('Select live blog', 'live-blogging' ); ?></label><br/>
-  <select id="live_blogging_entry_post" name="live_blogging_entry_post">
+  <select id="live_blogging_entry_post" name="live_blogging_entry_post" onchange="live_blogging_update_chatbox()">
     <?php foreach ($lblogs as $lbid => $lbname) { ?>
-        <option value="<?php echo $lbid; ?>"><?php echo $lbname; ?></option>
+        <option value="<?php echo $lbid; ?>" <?php selected($lbid, $active_id); ?>><?php echo $lbname; ?></option>
     <?php } ?>
   </select>
 <?php
@@ -795,7 +810,7 @@ function live_blogging_redirect($location, $post_id)
         $post = get_post($post_id);
         if ('liveblog_entry' == $post->post_type)
         {
-            return 'post-new.php?post_type=liveblog_entry&message=' . $args['message'];
+            return 'post-new.php?post_type=liveblog_entry&live_blogging_entry_post=' . $_POST['live_blogging_entry_post'] . '&message=' . $args['message'];
         }
     }
     
