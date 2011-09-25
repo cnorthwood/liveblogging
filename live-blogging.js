@@ -35,13 +35,12 @@ function live_blogging_poll(id)
             liveblog_id: id
         },
         function(response) {
-            entries = JSON.parse(response)
             for (entry in entries)
             {
                 live_blogging_handle_entry(entries[entry])
             }
         },
-        'application/json'
+        'json'
     )
     setTimeout(live_blogging_poll, 15000, id)
 }
