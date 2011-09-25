@@ -10,6 +10,7 @@ Text-Domain: live-blogging
 
 Live Blogging for WordPress
 Copyright (C) 2010 Chris Northwood <chris@pling.org.uk>
+Contributors: Gabriel Koen, Corey Gilmore
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -80,9 +81,15 @@ function live_blogging_init()
         add_action('wp_ajax_nopriv_live_blogging_poll', 'live_blogging_ajax');
     }
     
-    if (false === wp_get_schedule('live_blogging_check_twitter'))
+    if ('1' == get_option('liveblogging_enable_twitter') && false === wp_get_schedule('live_blogging_check_twitter'))
     {
         wp_schedule_event($timestamp, 'live_blogging', 'live_blogging_check_twitter');
+    }
+    elseif (wp_get_schedule('live_blogging_check_twitter'))
+    {
+        // Schedule enabled, even if Twitter updating is enabled, so we should
+        // clear the schedule
+        wp_clear_scheduled_hook('live_blogging_check_twitter');
     }
     
 }
@@ -144,7 +151,6 @@ function live_blogging_activate()
     {
         add_option('liveblogging_update_effect', 'top');
     }
-    wp_schedule_event($timestamp, 'live_blogging', 'live_blogging_check_twitter');
 }
 
 register_deactivation_hook(__FILE__, 'live_blogging_deactivate');
