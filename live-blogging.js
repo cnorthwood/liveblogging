@@ -34,7 +34,7 @@ function live_blogging_poll(id)
             action: 'live_blogging_poll',
             liveblog_id: id
         },
-        function(response) {
+        function(entries) {
             for (entry in entries)
             {
                 live_blogging_handle_entry(entries[entry])
