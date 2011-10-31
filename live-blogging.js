@@ -42,7 +42,7 @@ function live_blogging_poll(id)
         },
         'json'
     )
-    setTimeout(live_blogging_poll, 15000, id)
+    setTimeout(function(){live_blogging_poll(id)}, 15000)
 }
 
 function live_blogging_handle_entry(entry)
