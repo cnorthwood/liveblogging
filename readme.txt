@@ -179,8 +179,26 @@ bookmarking plugin, you must add the name of the function which is called by the
 `the_content` filter to this list. The green + allows you to add more text
 boxes, and then red - allows you to remove a function from being unhooked.
 
+= Can I add a hashtag to my tweets? =
+
+Sure! Just create a custom field on the post/page which contains the live blog
+called 'liveblogging_hashtag' and it will be appended to all of your tweets.
+
+(Note that this custom field should not contain the # character, that will be
+added automatically)
 
 == Changelog ==
+
+= 2.2.1 =
+
+Thanks to Danny Herran for the following bug fix:
+
+* Fixed a bug affecting the polling update method
+
+Thanks to STDestiny, jason_coleman and kcristiano at WordCamp Philly for the following feature:
+
+* You can now add a hashtag to your tweets by setting a custom field on the
+  parent post.
 
 = 2.2 =
 

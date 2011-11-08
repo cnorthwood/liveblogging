@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.2
+Version: 2.2.1
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -1161,14 +1161,35 @@ if (function_exists('curl_init'))
         {
             $connection = new TwitterOAuth(LIVE_BLOGGING_TWITTER_CONSUMER_KEY, LIVE_BLOGGING_TWITTER_CONSUMER_SECRET, get_option('liveblogging_twitter_token'), get_option('liveblogging_twitter_secret'));
             $content = filter_var($post->post_content, FILTER_SANITIZE_STRING);
-            if (strlen($content) > 140)
-            {
-                $tweet = $connection->post('statuses/update', array('status' => substr($content, 0, 139) . html_entity_decode('&hellip;', ENT_COMPAT, 'UTF-8')));
-            }
+
+            //get the hashtag (we need the id of the parent blog post, not $post->ID here)
+            $parent_post_id = (int)$_POST['live_blogging_entry_post'];
+            $hashtag = get_post_meta($parent_post_id, "liveblogging_hashtag", true);
+
+            //how much space do we have?
+            if ($hashtag)
+	    {
+                $tweetlength = 140 - strlen($hashtag) - 2;
+	    }
             else
+	    {
+                $tweetlength = 140;
+	    }
+
+            //do I need to trim the tweet?
+            if (strlen($content) > $tweetlength)
             {
-                $tweet = $connection->post('statuses/update', array('status' => $content));
+                $content = substr($content, 0, $tweetlength - 1) . html_entity_decode('&hellip;', ENT_COMPAT, 'UTF-8');
             }
+
+            //add hashtag
+            if ($hashtag)
+	    {
+                $content .= " #" . $hashtag;
+	    }
+
+            //send tweet
+            $tweet = $connection->post('statuses/update', array('status' => $content));
         }
         if (isset($tweet->id))
         {
