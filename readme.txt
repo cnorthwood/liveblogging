@@ -2,7 +2,7 @@
 Contributors: chrisnorthwood
 Tags: live, micro, JavaScript, blogging, event, automatic updating, auto updating
 Requires at least: 3.0
-Tested up to: 3.2.1
+Tested up to: 3.3
 Stable tag: 2.2.1
 
 Live Blogging is a plugin that allows you to insert micro/live blogs into posts
@@ -188,6 +188,10 @@ called 'liveblogging_hashtag' and it will be appended to all of your tweets.
 added automatically)
 
 == Changelog ==
+
+= 2.2.2 =
+
+* Change how the live blog entries sub-loop is iterated in order to fix auto-embedding (thanks to Biranit on the WordPress forum for the bug report and suggested fix)
 
 = 2.2.1 =
 

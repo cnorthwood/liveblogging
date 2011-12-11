@@ -3,7 +3,7 @@
 Plugin Name: Live Blogging
 Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
 Description: Plugin to support automatic live blogging
-Version: 2.2.1
+Version: 2.2.2
 Author: Chris Northwood
 Author URI: http://www.pling.org.uk/
 Text-Domain: live-blogging
@@ -503,7 +503,7 @@ function live_blogging_entry_meta()
     // Get all active live blogs
     while ($q->have_posts())
     {
-        $q->next_post();
+        $q->the_post();
         $lblogs[$q->post->ID] = esc_attr($q->post->post_title);
     }
     
@@ -979,6 +979,7 @@ function live_blogging_shortcode($atts, $id = null)
     {
         $id = $post->ID;
     }
+    $parent_post = $post;
     $s = '';
     if ('meteor' == get_option('liveblogging_method') && get_post_meta($post->ID, '_liveblog_active', true) == '1')
     {
@@ -1023,10 +1024,11 @@ function live_blogging_shortcode($atts, $id = null)
     $s .= '<div id="liveblog-' . $id . '">';
     while ($q->have_posts())
     {
-        $q->next_post();
+        $q->the_post();
         $s .= '<div id="liveblog-entry-' . $q->post->ID . '">' . live_blogging_get_entry($q->post) . '</div>';
     }
     $s .= '</div>';
+    $post = $parent_post;
     return $s;
 }
 
