@@ -189,6 +189,10 @@ added automatically)
 
 == Changelog ==
 
+= 2.2.3 =
+
+* Missed part of the fix in 2.2.2, so fully fixed it now (thanks Biranit)
+
 = 2.2.2 =
 
 * Change how the live blog entries sub-loop is iterated in order to fix auto-embedding (thanks to Biranit on the WordPress forum for the bug report and suggested fix)
