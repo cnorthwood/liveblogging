@@ -503,7 +503,7 @@ function live_blogging_entry_meta()
     // Get all active live blogs
     while ($q->have_posts())
     {
-        $q->the_post();
+        $q->next_post();
         $lblogs[$q->post->ID] = esc_attr($q->post->post_title);
     }
     

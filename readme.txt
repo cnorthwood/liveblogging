@@ -189,6 +189,10 @@ added automatically)
 
 == Changelog ==
 
+= 2.2.4 =
+
+* Fix regression where parent post details are filled in in the new entry screen
+
 = 2.2.3 =
 
 * Missed part of the fix in 2.2.2, so fully fixed it now (thanks Biranit)
