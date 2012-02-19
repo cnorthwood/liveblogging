@@ -189,6 +189,12 @@ added automatically)
 
 == Changelog ==
 
+= 2.2.6 =
+
+* Imported tweets now correctly format the tweet ID as used in author e-mails/URLs
+* Fixed regression where live blog specific RSS feeds no longer work (thanks to Jin Choi)
+* Stopped trashed/spammed imported mentions from being re-imported
+
 = 2.2.5 =
 
 * Remove notice caused by uninitialised variable

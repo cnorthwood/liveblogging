@@ -82,7 +82,9 @@ function live_blogging_init()
         add_action('wp_ajax_nopriv_live_blogging_poll', 'live_blogging_ajax');
     }
     
-    if ('1' == get_option('liveblogging_enable_twitter') && false === wp_get_schedule('live_blogging_check_twitter'))
+    if ('1' == get_option('liveblogging_enable_twitter')
+        && '1' != get_option('liveblogging_disable_twitter_comments')
+        && false === wp_get_schedule('live_blogging_check_twitter'))
     {
         wp_schedule_event(time(), 'live_blogging', 'live_blogging_check_twitter');
     }
@@ -367,6 +369,16 @@ function live_blogging_options()
                        name="liveblogging_enable_twitter"
                        value="1"
                        <?php if ('1' == get_option('liveblogging_enable_twitter')) { ?> checked="checked"<?php } ?> />
+            </td>
+        </tr>
+        <tr valign="top">
+            <th scope="row"><label for="liveblogging_enable_twitter">
+                <?php _e('Disable importing comments from Twitter', 'live-blogging'); ?>
+            </label></th>
+            <td><input type="checkbox"
+                       name="liveblogging_disable_twitter_comments"
+                       value="1"
+                       <?php if ('1' == get_option('liveblogging_disable_twitter_comments')) { ?> checked="checked"<?php } ?> />
             </td>
         </tr>
 <?php
@@ -1152,6 +1164,8 @@ function live_blogging_shortcode($atts, $id = null)
           'post_type' => 'liveblog_entry',
           'liveblog' => $id,
           'posts_per_page' => -1,
+          'post_status' => 'publish',
+          'orderby' => 'date',
           'order' => ('bottom' == get_option('liveblogging_update_effect')) ? 'ASC' : 'DESC'
         ));
     $s .= '<div id="liveblog-' . $id . '">';
@@ -1414,8 +1428,15 @@ if (function_exists('curl_init'))
                     array('author_email' => $tweet->id . '@twitter.com')
                 );
                 
-                if (!empty($in_reply_to) && empty($comments))
+                $imported_tweets =
+                    get_option('liveblogging_imported_tweets', array());
+                
+                if (!empty($in_reply_to)
+                    && empty($comments)
+                    && !in_array($tweet->id, $imported_tweets))
                 {
+                    $imported_tweets[] = $tweet->id;
+                    update_option('liveblogging_imported_tweets', $imported_tweets);
                     $query = new WP_Query(array(
                         'meta_key' => '_liveblogging_tweeted',
                         'meta_value' => $in_reply_to,
@@ -1472,7 +1493,8 @@ function live_blogging_ajax()
           'liveblog' => $liveblog_id,
           'posts_per_page' => -1,
           'orderby' => 'date',
-          'order' => 'ASC'
+          'order' => 'ASC',
+          'post_status' => 'publish',
         ));
     $r = array();
     while ($q->have_posts())
