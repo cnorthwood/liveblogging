@@ -39,7 +39,7 @@ function live_blogging_init()
     load_plugin_textdomain( 'live-blogging', false, dirname(plugin_basename( __FILE__ )) . '/lang/' );
     
     // Add the taxonomy which allows us to associate entries with posts
-    register_taxonomy('liveblog', 'liveblog_entry',
+    register_taxonomy('liveblog', null,
                       array(
                         'public' => false
                       ));
@@ -62,7 +62,8 @@ function live_blogging_init()
                         'show_ui' => true,
                         'supports' => array('editor', 'author'),
                         'taxonomies' => array('liveblog'),
-                        'menu_icon' => plugins_url('icon.png', __FILE__)
+                        'menu_icon' => plugins_url('icon.png', __FILE__),
+                        'publicly_queryable' => true
                        ));
     
     if ('disabled' != get_option('liveblogging_method'))
