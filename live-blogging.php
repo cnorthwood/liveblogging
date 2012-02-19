@@ -1429,8 +1429,8 @@ if (function_exists('curl_init'))
                             wp_insert_comment(array(
                                 'comment_post_ID' => intval($b->name),
                                 'comment_author' => $tweet->user->name . ' (@' . $tweet->user->screen_name . ')',
-                                'comment_author_email' => $tweet->id . '@twitter.com',
-                                'comment_author_url' => 'http://twitter.com/' . $tweet->user->screen_name . '/status/' . $tweet->id,
+                                'comment_author_email' => sprintf('%0.0f', $tweet->id) . '@twitter.com',
+                                'comment_author_url' => 'http://twitter.com/' . $tweet->user->screen_name . '/status/' . sprintf('%0.0f', $tweet->id),
                                 'comment_content' => $tweet->text,
                                 'user_id' => 0,
                                 'comment_agent' => 'Live Blogging for WordPress Twitter Importer',

@@ -63,7 +63,7 @@ method to 'Stream using Meteor'.
 The very first thing you need to do is select a post which to use as the shell
 for your live blog. Either create a new post, or select an existing one to edit,
 and then to the right of your post screen, there should be an option entitled:
-``Enable live blogging on this post''. Without this option being enabled, you
+"Enable live blogging on this post". Without this option being enabled, you
 will be unable to add new live blog entries to this post!
 
 The final step is very important. You must insert the shortcode [liveblog]
