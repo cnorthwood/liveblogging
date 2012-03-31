@@ -104,6 +104,7 @@ function live_blogging_register_settings()
     register_setting('live-blogging', 'liveblogging_method', 'live_blogging_sanitise_method');
     register_setting('live-blogging', 'liveblogging_comments');
     register_setting('live-blogging', 'liveblogging_enable_twitter');
+    register_setting('live-blogging', 'liveblogging_disable_twitter_comments');
     register_setting('live-blogging', 'liveblogging_date_style');
     register_setting('live-blogging', 'liveblogging_style');
     register_setting('live-blogging', 'liveblogging_meteor_host');
@@ -372,7 +373,7 @@ function live_blogging_options()
             </td>
         </tr>
         <tr valign="top">
-            <th scope="row"><label for="liveblogging_enable_twitter">
+            <th scope="row"><label for="liveblogging_disable_twitter_comments">
                 <?php _e('Disable importing comments from Twitter', 'live-blogging'); ?>
             </label></th>
             <td><input type="checkbox"
