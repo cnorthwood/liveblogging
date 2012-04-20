@@ -1,0 +1,7 @@
+<phpunit>
+    <testsuites>
+        <testsuite name="Live Blogging">
+            <directory>LiveBlogging/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

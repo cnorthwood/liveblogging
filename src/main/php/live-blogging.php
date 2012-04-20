@@ -68,7 +68,7 @@ function live_blogging_init()
     
     if ('disabled' != get_option('liveblogging_method'))
     {
-        wp_enqueue_script('live-blogging', plugins_url('live-blogging.js', __FILE__), array('jquery', 'json2'));
+        wp_enqueue_script('live-blogging', plugins_url('live-blogging.min.js', __FILE__), array('jquery', 'json2'));
         wp_localize_script('live-blogging', 'live_blogging', array(
                                 'ajaxurl' => addslashes(admin_url('admin-ajax.php')),
                                 'update_effect' => get_option('liveblogging_update_effect')
