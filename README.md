@@ -50,6 +50,11 @@ Running the tests
 
     make test
 
+Ensuring code quality
+---------------------
+
+    make lint
+
 Contributing
 ------------
 
