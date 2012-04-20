@@ -187,6 +187,11 @@ called 'liveblogging_hashtag' and it will be appended to all of your tweets.
 (Note that this custom field should not contain the # character, that will be
 added automatically)
 
+= AJAX updating doesn't work with multi-site and domain mapping =
+
+This forum topic (http://wordpress.org/support/topic/ajax-in-subsite) should
+resolve the issue for you.
+
 == Changelog ==
 
 = 2.2.6 =
