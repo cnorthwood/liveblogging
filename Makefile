@@ -35,7 +35,7 @@ build/img/%.png: resources/img/%.png
 build/LICENSE: LICENSE
 	cp LICENSE build/LICENSE
 
-build/readme.txt: readme.txt
+build/readme.txt: resources/readme.txt
 	cp resources/readme.txt build/readme.txt
 
 jslint:
@@ -49,3 +49,12 @@ phpunit:
 
 cucumber:
 	(cd src/test/cucumber && bundle exec cucumber)
+
+checkoutsvn:
+	svn co http://plugins.svn.wordpress.org/live-blogging/trunk build
+
+pushtowordpress: checkoutsvn all
+	svn ci build
+
+tagwordpress: pushtowordpress
+	(test -n "$(WORDPRESS_VERSION)" && svn cp http://plugins.svn.wordpress.org/live-blogging/trunk http://plugins.svn.wordpress.org/live-blogging/tags/$(WORDPRESS_VERSION))

@@ -54,3 +54,16 @@ Contributing
 ------------
 
 Pull requests would be nice at https://github.com/cnorthwood/liveblogging/
+
+Releasing to WordPress
+----------------------
+
+To just update the trunk release:
+
+    make pushtowordpress
+
+To tag a new release:
+
+    make tagwordpress WORDPRESS_VERSION=TEST
+
+This of course assumes you have permission to commit to the WordPress SVN repo.
