@@ -35,7 +35,7 @@ build/img/%.png: resources/img/%.png
 build/LICENSE: LICENSE
 	cp LICENSE build/LICENSE
 
-build/readme.txt: resources/readme.txt
+build/readme.txt: readme.txt
 	cp resources/readme.txt build/readme.txt
 
 jslint:
