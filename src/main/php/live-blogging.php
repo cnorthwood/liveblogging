@@ -62,7 +62,7 @@ function live_blogging_init()
                         'show_ui' => true,
                         'supports' => array('editor', 'author'),
                         'taxonomies' => array('liveblog'),
-                        'menu_icon' => plugins_url('icon.png', __FILE__),
+                        'menu_icon' => plugins_url('img/icon.png', __FILE__),
                         'publicly_queryable' => true
                        ));
     
@@ -482,7 +482,7 @@ function live_blogging_options()
                     <input type="text" name="liveblogging_unhooks[]" value="<?php echo esc_attr($unhook); ?>" />
                     <input type="button" id="liveblogging_unhook_delete_<?php echo $i; ?>"
                         title="<?php _e('Delete Unhook', 'live-blogging'); ?>"
-                        style="width:16px;height:16px;background:url('<?php echo plugins_url('delete.png', __FILE__) ?>');cursor:pointer;border:0;padding:0;margin:0;"
+                        style="width:16px;height:16px;background:url('<?php echo plugins_url('img/delete.png', __FILE__) ?>');cursor:pointer;border:0;padding:0;margin:0;"
                     />
                     <script type="text/javascript">
                     /*<![CDATA[ */
@@ -499,7 +499,7 @@ function live_blogging_options()
             ?>
                 <input type="button" id="liveblogging_unhook_add"
                     title="<?php _e('Add Unhook', 'live-blogging'); ?>"
-                    style="width:16px;height:16px;background:url('<?php echo plugins_url('add.png', __FILE__) ?>');cursor:pointer;border:0;padding:0;margin:0;"
+                    style="width:16px;height:16px;background:url('<?php echo plugins_url('img/add.png', __FILE__) ?>');cursor:pointer;border:0;padding:0;margin:0;"
                 />
                 <script type="text/javascript">
                 /*<![CDATA[ */
@@ -509,7 +509,7 @@ function live_blogging_options()
                                 <input type="text" name="liveblogging_unhooks[]"  /> \
                                 <input type="button" id="liveblogging_unhook_delete_' + unhook_i + '" \
                                 title="<?php _e('Delete Unhook', 'live-blogging'); ?>" \
-                                style="width:16px;height:16px;background:url(\'<?php echo plugins_url('delete.png', __FILE__) ?>\');cursor:pointer;border:0;padding:0;margin:0;" /> \
+                                style="width:16px;height:16px;background:url(\'<?php echo plugins_url('img/delete.png', __FILE__) ?>\');cursor:pointer;border:0;padding:0;margin:0;" /> \
                                 </div>').insertBefore('#liveblogging_unhook_add');
                         jQuery('#liveblogging_unhook_delete_' + unhook_i).click(function () {
                             jQuery(this.parentNode).remove()
