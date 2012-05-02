@@ -9,7 +9,7 @@ JSLINT=libs/jslint4java-2.0.2.jar
 
 dist: $(PHP_LIBS) $(PHP_FILES) $(IMG_FILES) $(LANGUAGE_FILES) build/live-blogging.min.js build/readme.txt build/LICENSE
 
-test: all cucumber phpunit
+test: dist cucumber phpunit
 
 strict: jslint phpcs
 
@@ -67,7 +67,7 @@ cucumber: dist jstest
 checkoutsvn:
 	svn co http://plugins.svn.wordpress.org/live-blogging/trunk build
 
-pushtowordpress: checkoutsvn all
+pushtowordpress: checkoutsvn dist
 	svn ci build
 
 tagwordpress: pushtowordpress
