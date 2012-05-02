@@ -199,6 +199,8 @@ resolve the issue for you.
 * Imported tweets now correctly format the tweet ID as used in author e-mails/URLs
 * Fixed regression where live blog specific RSS feeds no longer work (thanks to Jin Choi)
 * Stopped trashed/spammed imported mentions from being re-imported
+* Added Lithuanian translation
+* Now use minified JavaScript
 
 = 2.2.5 =
 
