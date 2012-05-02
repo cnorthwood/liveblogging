@@ -320,3 +320,4 @@ Blogging v2.
 
 * Chinese language: Haoxian Zeng
 * Persian language: Rasoul Moshrefizadeh
+* Lithuanian language: Vincent G from http://www.host1free.com/

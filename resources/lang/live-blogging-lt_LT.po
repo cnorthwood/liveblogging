@@ -1,0 +1,288 @@
+# Copyright (C) 2010 Chris Northwood
+# This file is distributed under the same license as the Live Blogging package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Live Blogging 2.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/live-blogging\n"
+"POT-Creation-Date: 2010-08-12 19:03+0000\n"
+"PO-Revision-Date: 2012-04-23 22:07+0200\n"
+"Last-Translator: \n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: live-blogging.php:50
+msgid "Live Blog Entries"
+msgstr "Live Blog Įrašai"
+
+#: live-blogging.php:51
+msgid "Live Blog Entry"
+msgstr "Live Blog Įrašas"
+
+#: live-blogging.php:52
+msgid "Add New Entry"
+msgstr "Pridėti Naują Įrašą"
+
+#: live-blogging.php:53
+#: live-blogging.php:55
+msgid "Edit Entry"
+msgstr "Redaguoti Įrašą"
+
+#: live-blogging.php:54
+msgid "New Entry"
+msgstr "Naujas Įrašas"
+
+#: live-blogging.php:56
+msgid "Search Entries"
+msgstr "Ieškoti Įrašų"
+
+#: live-blogging.php:57
+msgid "No entries found"
+msgstr "Nerasta jokių įrašų"
+
+#: live-blogging.php:58
+msgid "No entries found in trash"
+msgstr "Šiukšlėse nerasta jokių įrašų"
+
+#: live-blogging.php:60
+msgid "Individual entries for a live blog"
+msgstr "Individualūs įrašai gyvam tinklaraščiui"
+
+#. #-#-#-#-#  plugin.pot (Live Blogging 2.1)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: live-blogging.php:153
+msgid "Live Blogging"
+msgstr "Live Blogging"
+
+#: live-blogging.php:156
+#: live-blogging.php:1020
+msgid "Migrate Live Blogging"
+msgstr "Perkelti Live Blogging"
+
+#: live-blogging.php:160
+#: live-blogging.php:580
+msgid "Meteor Status"
+msgstr "Meteor Būsena"
+
+#: live-blogging.php:162
+msgid "Enable Live Blog"
+msgstr "Suaktyvinti Live Blog"
+
+#: live-blogging.php:163
+msgid "Select Live Blog"
+msgstr "Pasirinkti Live Blog"
+
+#: live-blogging.php:171
+msgid "Live Blogging Options"
+msgstr "Live Blogging Parinktys"
+
+#: live-blogging.php:179
+msgid "It appears you have live blogs created in version 1 of the plugin."
+msgstr "Panašu, kad Jūs turite gyvų tinklaraščių, sukurtų pirmoje papildinio versijoje."
+
+#: live-blogging.php:180
+msgid "Click here to update your legacy live blogs."
+msgstr "Paspauskite čia, jeigu norite atnaujinti Jūsų gyvų tinklaraščių palikimą."
+
+#: live-blogging.php:188
+msgid "Automatic Updating"
+msgstr "Automatinis Atnaujinimas"
+
+#: live-blogging.php:192
+msgid "Method to use for live blog reader updating"
+msgstr "Metodas, kurį galima panaudoti gyvų tinklaraščių skaitytuvo atnaujinimui"
+
+#: live-blogging.php:194
+msgid "Poll (default, requires no special configuration)"
+msgstr "Apklausa (pagal numatymą nereikalauja specialios konfigūracijos)"
+
+#: live-blogging.php:195
+msgid "Stream using Meteor (lower server load and faster updates, but needs special configuration)"
+msgstr "Srautas, naudojantis Meteor (mažesnis serverio apkrovimas ir greitesni atnaujinimai, bet reikalinga speciali konfigūracija)"
+
+#: live-blogging.php:196
+msgid "Disable automatic updates"
+msgstr "Išjungti automatinius atnaujinimus"
+
+#: live-blogging.php:201
+msgid "Enable auto-updating of comments (this will not work on some themes, please read the documentation!)"
+msgstr "Suaktyvinti automatinius komentarų atnaujinimus (tai neveiks su kai kuriais apipaidalinimais, prašome perskaityti dokumentaciją!)"
+
+#: live-blogging.php:207
+msgid "Posting to Twitter"
+msgstr "Įrašo skelbimas Twitter"
+
+#: live-blogging.php:214
+#: live-blogging.php:233
+msgid "Connect with Twitter"
+msgstr "Prisijungti prie Twitter"
+
+#: live-blogging.php:219
+msgid "You are already connected to Twitter. Click the image below to change the account you are connected to."
+msgstr "Jūs jau prisijungęs prie Twitter. Paspauskite vaizdą žemiau, norėdamas pakeisti paskyrą, prie kurios esate prisijungęs."
+
+#: live-blogging.php:224
+msgid "You are not yet connected to Twitter. Click the image below to connect."
+msgstr "Jūs dar neprisijungęs prie Twitter. Paspauskite vaizdą žemiau, kad prisijungtumėte."
+
+#: live-blogging.php:237
+msgid "Unable to connect to Twitter at this time."
+msgstr "Šiuo metu neįmanoma prisijungti prie Twitter."
+
+#: live-blogging.php:247
+msgid "Enable posting to Twitter"
+msgstr "Suaktyvinti skelbimą Twitter."
+
+#: live-blogging.php:256
+msgid "Twitter functionality disabled due to missing PHP CURL module"
+msgstr "Twitter funkcionalumas išjungtas dėl to, kad trūksta kai kurių PHP CURL modulių"
+
+#: live-blogging.php:263
+msgid "Live Blog Style"
+msgstr "Live Blog Stilius"
+
+#: live-blogging.php:267
+msgid "How should new entries appear?"
+msgstr "Kaip turėtų atrodyti nauji įrašai?"
+
+#: live-blogging.php:269
+msgid "The latest entry at the top"
+msgstr "Paskiausias įrašas viršuje"
+
+#: live-blogging.php:270
+msgid "The latest entry at the bottom"
+msgstr "Paskiausias įrašas apačioje"
+
+#: live-blogging.php:275
+msgid "Date specifier for live blog entries (see <a href=\"http://uk3.php.net/manual/en/function.date.php\">PHP's date function</a> for allowable strings)"
+msgstr "Datos nurodytojas gyvo tinklaraščio įrašams (žiūrėkite <a href=\"http://uk3.php.net/manual/en/function.date.php\">PHP datos funkciją</a> leidžiamoms eilutėms)"
+
+#: live-blogging.php:280
+msgid "Style for live blogging entries ($DATE gets replaced with the entry date/time, in the format specified above, $CONTENT with the body of the entry and $AUTHOR with the name of that author)"
+msgstr "Gyvo tinklaraščio įrašų stilius ($DATE pakeičiama įrašo data/laiku, formatu, nurodytu žemiau, $CONTENT įrašo turiniu ir $AUTHOR įrašo autoriaus vardu)"
+
+#: live-blogging.php:286
+msgid "Meteor Configuration"
+msgstr "Meteor Konfigūracija"
+
+#: live-blogging.php:289
+msgid "Meteor Subscriber Host (the publicly accessible URL of your Meteor server - can be left blank if not using Meteor)"
+msgstr "Meteor Prenumeratoriaus Serveris (viešai pasiekiama universalioji Jūsų Meteor serveri nuoroda - gali būti palikta tuščia, jeigu nenaudojate Meteor)"
+
+#: live-blogging.php:294
+msgid "Meteor Controller Host (the private IP of the Meteor server - can be left blank if not using Meteor)"
+msgstr "Meteor Valdiklio Serveris (pivatus Meteor serverio IP adresas - gali būti palikta tuščia, jeigu nenaudojate Meteor)"
+
+#: live-blogging.php:299
+msgid "Meteor Controller Port (can be left blank if not using Meteor)"
+msgstr "Meteor Valdiklio Prievadas (gali būti palikta tuščia, jeigu nenaudojate Meteor)"
+
+#: live-blogging.php:304
+msgid "Meteor Identifier (a unique string to identify this WordPress install - can be left blank if not using Meteor)"
+msgstr "Meteor Identifikatorius (unikali eilutė, skirta identifikuoti WordPress diegimą - gali būti palikta tuščia, jeigu nenaudojate Meteor)"
+
+#: live-blogging.php:310
+msgid "Advanced Settings"
+msgstr "Išplėstinės Nuostatos"
+
+#: live-blogging.php:314
+msgid "Actions to be unhooked when displaying live blog content (advanced feature that can be used to work around badly coded plugins that mangle individual live blog entries in undesirable ways, e.g., some bookmarking plugins)"
+msgstr "Veiksmai, kurie bus atkabinti, rodant gyvojo tinklaraščio turinį (išplėstinė funkcija, kuri gali būti naudojama tvarkantis su prastai sukurtais papildiniais, kurie išdarko gyvojo tinklarašio įrašus nesuprantamais būdais, pvz. kai kurie adresyno įrašų papildiniai)"
+
+#: live-blogging.php:326
+#: live-blogging.php:347
+msgid "Delete Unhook"
+msgstr "Ištrinti Atkabinimą"
+
+#: live-blogging.php:340
+msgid "Add Unhook"
+msgstr "Pridėti Atkabinimą"
+
+#: live-blogging.php:362
+msgid "Save Changes"
+msgstr "Įrašyti Pakeitimus"
+
+#: live-blogging.php:383
+msgid "Enable live blogging on this post"
+msgstr "Suaktyvinti live blogging šiame įraše"
+
+#: live-blogging.php:384
+msgid "Please remember to include the [liveblog] shortcode where you want the liveblog in this post to appear."
+msgstr "Nepamirškite įtraukti [liveblog] trumpojo kodo ten, kur Jūs norite, jog įrašui būtų pritaikomas gyvojo tinklaraščio motyvas."
+
+#: live-blogging.php:450
+#: live-blogging.php:485
+msgid "There are no currently active live blogs."
+msgstr "Šiuo metu nėra aktyvių gyvųjų tinklaraščių."
+
+#: live-blogging.php:454
+msgid "Select live blog"
+msgstr "Pasirinkite gyvąjį tinklaraštį"
+
+#: live-blogging.php:567
+msgid "Live Blog"
+msgstr "Gyvasis Tinklaraštis"
+
+#: live-blogging.php:576
+msgid "Access Denied"
+msgstr "Prieiga Nesuteikta"
+
+#: live-blogging.php:589
+msgid "Unable to establish connection to Meteor:"
+msgstr "Neįmanoma užmegzti ryšio su Meteor:"
+
+#: live-blogging.php:605
+msgid "Connection to Meteor not configured."
+msgstr "Prisijungimas prie Meteor nesukonfigūruotas:"
+
+#: live-blogging.php:924
+msgid "Every 5 minutes"
+msgstr "Kas 5 minutes"
+
+#: live-blogging.php:1032
+msgid "Click the button below to upgrade legacy live blogs to the new system. To avoid timeout errors, only 25 entries at a time will be translated. For blogs with large numbers of live blog entries, it may be necessary to run this multiple times to convert them all."
+msgstr "Paspauskite mygtuką žemiau, norėdamas atnaujinti palikimo gyvuosius tinklaraščius naujajai sistemai. Kad išvengti skirtojo laiko pabaigos klaidų, tik 25 įrašai vienu metu bus pakeisti. Tinklaraščiams su dideliu skaičumi gyvojo tinklaraščio įrašų, gali prireikti naudoti šią funkciją daug kartų, kad visi įrašai būtų pakeisti."
+
+#: live-blogging.php:1033
+msgid "Start"
+msgstr "Pradėti"
+
+#: live-blogging.php:1078
+#, php-format
+msgid "%d entry left to migrate"
+msgid_plural "%d entries left to migrate."
+msgstr[0] "liko perkelti %d įrašą"
+msgstr[1] "liko perkelti %d įrašų(-us)"
+
+#: live-blogging.php:1081
+#: live-blogging.php:1114
+msgid "Next batch"
+msgstr "Kitas Paketas"
+
+#: live-blogging.php:1111
+#, php-format
+msgid "%d description left to migrate"
+msgid_plural "%d descriptions left to migrate."
+msgstr[0] "liko perkelti % aprašymą"
+msgstr[1] "liko perkelti % aprašymų(-us)"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/live-blogging/"
+msgstr "http://wordpress.org/extend/plugins/live-blogging/"
+
+#. Description of the plugin/theme
+msgid "Plugin to support automatic live blogging"
+msgstr "Papildinys, skirtas gyvojo tinklaraščio įrašų palaikymui"
+
+#. Author of the plugin/theme
+msgid "Chris Northwood"
+msgstr "Chris Northwood"
+
+#. Author URI of the plugin/theme
+msgid "http://www.pling.org.uk/"
+msgstr "http://www.pling.org.uk/"
+

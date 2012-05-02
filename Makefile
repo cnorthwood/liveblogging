@@ -3,7 +3,7 @@ JS_TESTS=
 PHP_LIBS=build/twitteroauth/
 PHP_FILES=build/live-blogging.php build/twittercallback.php
 IMG_FILES=build/img/add.png build/img/delete.png build/img/icon.png
-LANGUAGE_FILES=build/lang/live-blogging-fa_IR.mo build/lang/live-blogging-zh_CN.mo
+LANGUAGE_FILES=build/lang/live-blogging-fa_IR.mo build/lang/live-blogging-zh_CN.mo build/lang/live-blogging-lt_LT.mo
 YUICOMPRESSOR=libs/yuicompressor-2.4.7.jar
 JSLINT=libs/jslint4java-2.0.2.jar
 
