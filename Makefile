@@ -34,7 +34,7 @@ build/twitteroauth/: src/main/php/twitteroauth/
 build/img/%.png: resources/img/%.png
 	test -d build/img/ || mkdir build/img/
 	mkdir -p build/img/
-	pngcrush $< $@
+	(test `uname -o` = "Msys" && libs/pngcrush.exe $< $@) || pngcrush $< $@
 	touch $@
 
 build/LICENSE: LICENSE
@@ -56,13 +56,13 @@ build/qunit/%.js: src/test/js/%.js
 	cp $< $@
 
 phpcs: $(PHP_FILES)
-	phpcs $(PHP_FILES)
+	php libs/PHP_CodeSniffer/scripts/phpcs $(PHP_FILES)
 
 phpunit:
-	phpunit -c src/test/php/phpunit.xml
+	libs/phpunit/phpunit.php -c src/test/php/phpunit.xml
 
 cucumber: dist jstest
-	(cd src/test/cucumber && bundle exec cucumber)
+	(cd src/test/cucumber && bundle install && bundle exec cucumber)
 
 checkoutsvn:
 	svn co http://plugins.svn.wordpress.org/live-blogging/trunk build

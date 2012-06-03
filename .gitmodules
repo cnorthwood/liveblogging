@@ -1,0 +1,6 @@
+[submodule "libs/PHP_CodeSniffer"]
+	path = libs/PHP_CodeSniffer
+	url = git://github.com/pear/PHP_CodeSniffer.git
+[submodule "libs/phpunit"]
+	path = libs/phpunit
+	url = https://github.com/sebastianbergmann/phpunit.git
