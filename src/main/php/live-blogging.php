@@ -595,7 +595,7 @@ function live_blogging_save_post_meta($post_id)
 
 // Insert live blog button on rich editor
 function live_blogging_insert_liveblog_button($context) {
-    $additional = '<a style="cursor:pointer;" onclick="live_blog_insert_shortcode();">Live Blog</a>';
+    $additional = '<a style="cursor:pointer;" onclick="live_blog_insert_shortcode();" id="insert-live-blog-shortcode">Live Blog</a>';
     return $context . $additional;
 }
 add_action('media_buttons_context', 'live_blogging_insert_liveblog_button');
