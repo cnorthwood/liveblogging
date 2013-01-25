@@ -194,6 +194,10 @@ resolve the issue for you.
 
 == Changelog ==
 
+= trunk =
+
+* added Slovak language support (thanks to Brance Radenovich)
+
 = 2.2.6 =
 
 * Imported tweets now correctly format the tweet ID as used in author e-mails/URLs
@@ -323,3 +327,4 @@ Blogging v2.
 * Chinese language: Haoxian Zeng
 * Persian language: Rasoul Moshrefizadeh
 * Lithuanian language: Vincent G from http://www.host1free.com/
+* Slovak Language: Branco, Slovak translation (<a href="http://webhostinggeeks.com/user-reviews/">WebHostingGeeks.com</a>)

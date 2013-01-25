@@ -1,0 +1,336 @@
+# Translation of the WordPress plugin Live Blogging 2.1 by Chris Northwood.
+# Copyright (C) 2010 Chris Northwood
+# This file is distributed under the same license as the Live Blogging package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Live Blogging 2.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/live-blogging\n"
+"POT-Creation-Date: 2010-08-12 19:03+0000\n"
+"PO-Revision-Date: 2013-01-20 11:25+0300\n"
+"Last-Translator: Serg\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: live-blogging.php:50
+msgid "Live Blog Entries"
+msgstr "Live blogu"
+
+#: live-blogging.php:51
+msgid "Live Blog Entry"
+msgstr "Live Blog vstupe"
+
+#: live-blogging.php:52
+msgid "Add New Entry"
+msgstr "Pridať nový záznam"
+
+#: live-blogging.php:53 live-blogging.php:55
+msgid "Edit Entry"
+msgstr "Upraviť položky"
+
+#: live-blogging.php:54
+msgid "New Entry"
+msgstr "Nová položka"
+
+#: live-blogging.php:56
+msgid "Search Entries"
+msgstr "Hľadať položky"
+
+#: live-blogging.php:57
+msgid "No entries found"
+msgstr "No entries found"
+
+#: live-blogging.php:58
+msgid "No entries found in trash"
+msgstr "No entries found koša"
+
+#: live-blogging.php:60
+msgid "Individual entries for a live blog"
+msgstr "Jednotlivé položky pre live blog"
+
+#. #-#-#-#-#  plugin.pot (Live Blogging 2.1)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: live-blogging.php:153
+msgid "Live Blogging"
+msgstr "Živé blogovanie"
+
+#: live-blogging.php:156 live-blogging.php:1020
+msgid "Migrate Live Blogging"
+msgstr "Živých blogov migrujú"
+
+#: live-blogging.php:160 live-blogging.php:580
+msgid "Meteor Status"
+msgstr "Meteor stav"
+
+#: live-blogging.php:162
+msgid "Enable Live Blog"
+msgstr "Povoliť Live Blog"
+
+#: live-blogging.php:163
+msgid "Select Live Blog"
+msgstr "Vyberte Live Blog"
+
+#: live-blogging.php:171
+msgid "Live Blogging Options"
+msgstr "Živé blogovanie možnosti"
+
+#: live-blogging.php:179
+msgid "It appears you have live blogs created in version 1 of the plugin."
+msgstr "Zdá sa, že máte live blogy vytvorené vo verzii 1 pluginu."
+
+#: live-blogging.php:180
+msgid "Click here to update your legacy live blogs."
+msgstr "Kliknite tu pre aktualizujte svoje staršie live blogy."
+
+#: live-blogging.php:188
+msgid "Automatic Updating"
+msgstr "Automatické aktualizácie"
+
+#: live-blogging.php:192
+msgid "Method to use for live blog reader updating"
+msgstr "Metódu použiť pre live blog reader aktualizáciu"
+
+#: live-blogging.php:194
+msgid "Poll (default, requires no special configuration)"
+msgstr "Anketa (predvolené, nevyžaduje žiadna špeciálna konfigurácia)"
+
+#: live-blogging.php:195
+msgid ""
+"Stream using Meteor (lower server load and faster updates, but needs special "
+"configuration)"
+msgstr ""
+"Prúdu pomocou Meteor (nižšie zaťaženie servera a rýchlejšie aktualizácie, "
+"ale špeciálne potreby Konfigurácia)"
+
+#: live-blogging.php:196
+msgid "Disable automatic updates"
+msgstr "Vypnúť automatické aktualizácie"
+
+#: live-blogging.php:201
+msgid ""
+"Enable auto-updating of comments (this will not work on some themes, please "
+"read the documentation!)"
+msgstr ""
+"Povoliť auto-aktualizáciu komentárov (to nebude fungovať na niektoré témy, "
+"prosím Prečítajte si dokumentáciu!)"
+
+#: live-blogging.php:207
+msgid "Posting to Twitter"
+msgstr "Vysielania na Twitter"
+
+#: live-blogging.php:214 live-blogging.php:233
+msgid "Connect with Twitter"
+msgstr "Spojiť s Twitter"
+
+#: live-blogging.php:219
+msgid ""
+"You are already connected to Twitter. Click the image below to change the "
+"account you are connected to."
+msgstr ""
+"Už ste pripojení na Twitter. Kliknite na obrázok nižšie zmeniť ste pripojení "
+"k účtu."
+
+#: live-blogging.php:224
+msgid "You are not yet connected to Twitter. Click the image below to connect."
+msgstr ""
+"Nie ste ešte pripojený k rozechvění. Kliknite na obrázok nižšie sa pripojiť."
+
+#: live-blogging.php:237
+msgid "Unable to connect to Twitter at this time."
+msgstr "Nedá sa pripojiť k rozechvění v tejto dobe."
+
+#: live-blogging.php:247
+msgid "Enable posting to Twitter"
+msgstr "Zapnutie vysielania na Twitter"
+
+#: live-blogging.php:256
+msgid "Twitter functionality disabled due to missing PHP CURL module"
+msgstr "Twitter funkčnosť vypnuté kvôli chýbajúcim PHP CURL modul"
+
+#: live-blogging.php:263
+msgid "Live Blog Style"
+msgstr "Live Blog štýlu"
+
+#: live-blogging.php:267
+msgid "How should new entries appear?"
+msgstr "Ako by sa mal objaviť nové položky?"
+
+#: live-blogging.php:269
+msgid "The latest entry at the top"
+msgstr "Posledný záznam v hornej"
+
+#: live-blogging.php:270
+msgid "The latest entry at the bottom"
+msgstr "Posledný záznam v spodnej"
+
+#: live-blogging.php:275
+msgid ""
+"Date specifier for live blog entries (see <a href=\"http://uk3.php.net/"
+"manual/en/function.date.php\">PHP's date function</a> for allowable strings)"
+msgstr ""
+"Dátumu špecifikátory na blogu live (pozri < href=\"http://uk3.php.net/"
+"Funkcia date manual/en/function.Date.php\">PHP's prípustné struny)"
+
+#: live-blogging.php:280
+msgid ""
+"Style for live blogging entries ($DATE gets replaced with the entry date/"
+"time, in the format specified above, $CONTENT with the body of the entry and "
+"$AUTHOR with the name of that author)"
+msgstr ""
+"Štýl pre živé blogovanie položky ($ dátum dostane nahradený dátumom vstupu /"
+"čas vo formáte určenom vyššie, $CONTENT s orgánom položky a $AUTORA s názvom "
+"ktoré autor)"
+
+#: live-blogging.php:286
+msgid "Meteor Configuration"
+msgstr "Meteor konfigurácie"
+
+#: live-blogging.php:289
+msgid ""
+"Meteor Subscriber Host (the publicly accessible URL of your Meteor server - "
+"can be left blank if not using Meteor)"
+msgstr ""
+"Meteor účastníka hostiteľa (verejne prístupný URL servera Meteor- môže byť "
+"ponechané prázdne, ak nepoužívate Meteor)"
+
+#: live-blogging.php:294
+msgid ""
+"Meteor Controller Host (the private IP of the Meteor server - can be left "
+"blank if not using Meteor)"
+msgstr ""
+"Meteor radič hostiteľa (privátna IP servera Meteor - môže ostať prázdne, ak "
+"nepoužívate Meteor)"
+
+#: live-blogging.php:299
+msgid "Meteor Controller Port (can be left blank if not using Meteor)"
+msgstr ""
+"Meteor Controller Port (môže byť ponechané prázdne, ak nepoužívate Meteor)"
+
+#: live-blogging.php:304
+msgid ""
+"Meteor Identifier (a unique string to identify this WordPress install - can "
+"be left blank if not using Meteor)"
+msgstr ""
+"Meteor identifikátor (jedinečný reťazec na identifikáciu tejto inštalácie "
+"WordPress - môže byť ponechané prázdne, ak nepoužívate Meteor)"
+
+#: live-blogging.php:310
+msgid "Advanced Settings"
+msgstr "Rozšírené nastavenia"
+
+#: live-blogging.php:314
+msgid ""
+"Actions to be unhooked when displaying live blog content (advanced feature "
+"that can be used to work around badly coded plugins that mangle individual "
+"live blog entries in undesirable ways, e.g., some bookmarking plugins)"
+msgstr ""
+"Akcie sa uvoľnila pri zobrazovaní live blog obsah (pokročilé funkcie ktoré "
+"možno obísť zle kódované pluginy že modifikovať jednotlivé Live blogu "
+"nežiaduce spôsobmi, napríklad niektoré bookmarking pluginy)"
+
+#: live-blogging.php:326 live-blogging.php:347
+msgid "Delete Unhook"
+msgstr "Delete odpojiť"
+
+#: live-blogging.php:340
+msgid "Add Unhook"
+msgstr "Pridať odpojiť"
+
+#: live-blogging.php:362
+msgid "Save Changes"
+msgstr "Uložiť zmeny"
+
+#: live-blogging.php:383
+msgid "Enable live blogging on this post"
+msgstr "Povoliť živých blogov na tento príspevok"
+
+#: live-blogging.php:384
+msgid ""
+"Please remember to include the [liveblog] shortcode where you want the "
+"liveblog in this post to appear."
+msgstr ""
+"Prosím, nezabudnite pripojiť [liveblog] krátky, kde chcete liveblog v tomto "
+"príspevku sa objaví."
+
+#: live-blogging.php:450 live-blogging.php:485
+msgid "There are no currently active live blogs."
+msgstr "Neexistujú žiadne aktuálne aktívny live blogy."
+
+#: live-blogging.php:454
+msgid "Select live blog"
+msgstr "Vyberte live blog"
+
+#: live-blogging.php:567
+msgid "Live Blog"
+msgstr "Live Blog"
+
+#: live-blogging.php:576
+msgid "Access Denied"
+msgstr "Prístup odmietnutý"
+
+#: live-blogging.php:589
+msgid "Unable to establish connection to Meteor:"
+msgstr "Nedá sa vytvoriť pripojenie na Meteor:"
+
+#: live-blogging.php:605
+msgid "Connection to Meteor not configured."
+msgstr "Spojenie Meteor Nenastavené."
+
+#: live-blogging.php:924
+msgid "Every 5 minutes"
+msgstr "Každých 5 minút"
+
+#: live-blogging.php:1032
+msgid ""
+"Click the button below to upgrade legacy live blogs to the new system. To "
+"avoid timeout errors, only 25 entries at a time will be translated. For "
+"blogs with large numbers of live blog entries, it may be necessary to run "
+"this multiple times to convert them all."
+msgstr ""
+"Kliknite na tlačidlo nižšie na upgrade starších live blogy na nový systém. "
+"Na vyhnúť sa chybám timeout, prepisu iba 25 položiek naraz. Pre blogy s "
+"veľkým počtom live blogu, môže byť potrebné spustiť Tento viackrát previesť "
+"všetky."
+
+#: live-blogging.php:1033
+msgid "Start"
+msgstr "Štart"
+
+#: live-blogging.php:1078
+#, php-format
+msgid "%d entry left to migrate"
+msgid_plural "%d entries left to migrate."
+msgstr[0] ""
+msgstr[1] ""
+
+#: live-blogging.php:1081 live-blogging.php:1114
+msgid "Next batch"
+msgstr "Ďalšej dávke"
+
+#: live-blogging.php:1111
+#, php-format
+msgid "%d description left to migrate"
+msgid_plural "%d descriptions left to migrate."
+msgstr[0] ""
+msgstr[1] ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/live-blogging/"
+msgstr "http://WordPress.org/extend/plugins/Live-Blogging/"
+
+#. Description of the plugin/theme
+msgid "Plugin to support automatic live blogging"
+msgstr "Plugin podpora automatických živých blogov"
+
+#. Author of the plugin/theme
+msgid "Chris Northwood"
+msgstr "Chris Northwood"
+
+#. Author URI of the plugin/theme
+msgid "http://www.pling.org.uk/"
+msgstr "http://www.pling.org.uk/"
