@@ -1,22 +1,35 @@
 JS_SRC=src/main/js/live-blogging.js
-JS_TESTS=
 PHP_LIBS=build/twitteroauth/
 PHP_FILES=build/live-blogging.php build/twittercallback.php
 IMG_FILES=build/img/add.png build/img/delete.png build/img/icon.png
-LANGUAGE_FILES=build/lang/live-blogging-fa_IR.mo build/lang/live-blogging-zh_CN.mo build/lang/live-blogging-lt_LT.mo
+LANGUAGE_FILES=build/lang/live-blogging-fa_IR.mo build/lang/live-blogging-lt_LT.mo build/lang/live-blogging-sk_SK.mo build/lang/live-blogging-zh_CN.mo
 YUICOMPRESSOR=libs/yuicompressor-2.4.7.jar
 JSLINT=libs/jslint4java-2.0.2.jar
+JSTESTDRIVER=libs/JsTestDriver-1.3.5.jar
 
 dist: $(PHP_LIBS) $(PHP_FILES) $(IMG_FILES) $(LANGUAGE_FILES) build/live-blogging.min.js build/readme.txt build/LICENSE
 
-test: dist cucumber phpunit
+clean:
+	rm -rf build/*
+
+test: phpunit jstestdriver
+
+phpunit:
+	libs/phpunit/phpunit.php -c src/test/php/phpunit.xml
+
+jstestdriver:
+	java -jar $(JSTESTDRIVER) --reset --port 9874 --browser open --tests all
+
+cucumber: dist
+	(cd src/test/cucumber && bundle install && bundle exec cucumber)
 
 strict: jslint phpcs
 
-lint: strict test dist
+jslint:
+	java -jar $(JSLINT) $(JS_SRC)
 
-clean:
-	rm -rf build/*
+phpcs: $(PHP_FILES)
+	php libs/PHP_CodeSniffer/scripts/phpcs $(PHP_FILES)
 
 build/live-blogging.min.js: build $(JS_SRC)
 	java -jar $(YUICOMPRESSOR) -o build/live-blogging.min.js $(JS_SRC)
@@ -42,27 +55,6 @@ build/LICENSE: LICENSE
 
 build/readme.txt: resources/readme.txt
 	cp resources/readme.txt build/readme.txt
-
-jslint:
-	java -jar $(JSLINT) $(JS_SRC)
-
-jstest: build/qunit/TestRunner.html $(JS_TESTS)
-
-build/qunit/TestRunner.html: src/test/js/TestRunner.html
-	test -d build/qunit/ || mkdir build/qunit/
-	cp src/test/js/TestRunner.html build/qunit/TestRunner.html
-
-build/qunit/%.js: src/test/js/%.js
-	cp $< $@
-
-phpcs: $(PHP_FILES)
-	php libs/PHP_CodeSniffer/scripts/phpcs $(PHP_FILES)
-
-phpunit:
-	libs/phpunit/phpunit.php -c src/test/php/phpunit.xml
-
-cucumber: dist jstest
-	(cd src/test/cucumber && bundle install && bundle exec cucumber)
 
 checkoutsvn:
 	svn co http://plugins.svn.wordpress.org/live-blogging/trunk build

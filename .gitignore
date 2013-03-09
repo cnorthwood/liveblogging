@@ -2,3 +2,4 @@ build
 *.komodoproject
 .idea
 *.iml
+sandbox/.vagrant
