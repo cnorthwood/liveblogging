@@ -6,6 +6,7 @@ LANGUAGE_FILES=build/lang/live-blogging-fa_IR.mo build/lang/live-blogging-lt_LT.
 YUICOMPRESSOR=libs/yuicompressor-2.4.7.jar
 JSLINT=libs/jslint4java-2.0.2.jar
 JSTESTDRIVER=libs/JsTestDriver-1.3.5.jar
+BROWSER=open
 
 dist: $(PHP_LIBS) $(PHP_FILES) $(IMG_FILES) $(LANGUAGE_FILES) build/live-blogging.min.js build/readme.txt build/LICENSE
 
@@ -18,7 +19,7 @@ phpunit:
 	libs/phpunit/phpunit.php -c src/test/php/phpunit.xml
 
 jstestdriver:
-	java -jar $(JSTESTDRIVER) --reset --port 9874 --browser open --tests all
+	java -jar $(JSTESTDRIVER) --reset --port 9874 --browser $(BROWSER) --tests all
 
 cucumber: dist
 	(cd src/test/cucumber && bundle install && bundle exec cucumber)
