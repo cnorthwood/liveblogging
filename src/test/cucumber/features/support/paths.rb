@@ -1,5 +1,5 @@
 def wordpress_url(path)
-  "http://localhost/wordpress/" + path
+  "http://192.168.20.10/" + path
 end
 
 def get_path(name)

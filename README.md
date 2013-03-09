@@ -1,6 +1,8 @@
 Live Blogging for WordPress
 ===========================
 
+[![Build Status](https://travis-ci.org/cnorthwood/liveblogging.png?branch=master)](https://travis-ci.org/cnorthwood/liveblogging)
+
 http://cnorthwood.github.com/liveblogging/
 http://wordpress.org/extend/plugins/live-blogging/
 
@@ -50,7 +52,7 @@ Running the tests
 Ensuring code quality
 ---------------------
 
-    make lint
+    make strict
 
 Contributing
 ------------

@@ -21,8 +21,11 @@ phpunit:
 jstestdriver:
 	java -jar $(JSTESTDRIVER) --reset --port 9874 --browser $(BROWSER) --tests all
 
-cucumber: dist
-	(cd src/test/cucumber && bundle install && bundle exec cucumber)
+cucumber: sandbox
+	(cd src/test/cucumber && bundle && bundle exec cucumber)
+
+sandbox: dist
+	(cd sandbox && vagrant up)
 
 strict: jslint phpcs
 
