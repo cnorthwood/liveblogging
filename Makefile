@@ -1,5 +1,5 @@
 JS_SRC=src/main/js/live-blogging.js
-PHP_LIBS=build/twitteroauth/
+PHP_LIBS=libs/twitteroauth/
 PHP_FILES=build/live-blogging.php build/twittercallback.php
 IMG_FILES=build/img/add.png build/img/delete.png build/img/icon.png
 LANGUAGE_FILES=build/lang/live-blogging-fa_IR.mo build/lang/live-blogging-lt_LT.mo build/lang/live-blogging-sk_SK.mo build/lang/live-blogging-zh_CN.mo
