@@ -17,33 +17,30 @@ To 'build' Live Blogging for WordPress:
 * Make
 * Java
 * gettext
-* pngcrush
+* pngcrush (OSX/Linux only - not needed on Windows)
 
 To run the Live Blogging for WordPress test suite:
 
 * Ruby
-* phpunit
 * Bundler
 * Firefox
-* phpcs
+* Vagrant
 
 Using the development version of it
 -----------------------------------
 
-    mkdir build
-    make
+    make dist
+    cd sandbox
+    vagrant up
 
-This will put a 'build' of Live Blogging in the build directory, ready to be
-popped into your WordPress plugins directory.
+This will start a VM at http://192.168.20.10 with a blank WordPress blog for you to experiment with. This
+must be running for the Cucumber tests to run. The database is wiped on every load of the sandbox.
 
-Preparing WordPress for Cucumber tests
---------------------------------------
+Alternatively, you can run
 
-    cd src/test/cucumber
-    bundle
+    make dist
 
-You will also need to set up a WordPress install with some base configuration
-for Cucumber to run against. More info to come.
+And use the build/ folder in your own WordPress development instance.
 
 Running the tests
 -----------------

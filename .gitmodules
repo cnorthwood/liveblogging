@@ -4,3 +4,18 @@
 [submodule "libs/phpunit"]
 	path = libs/phpunit
 	url = https://github.com/sebastianbergmann/phpunit.git
+[submodule "sandbox/cookbooks/wordpress"]
+	path = sandbox/cookbooks/wordpress
+	url = https://github.com/opscode-cookbooks/wordpress.git
+[submodule "sandbox/cookbooks/apache2"]
+	path = sandbox/cookbooks/apache2
+	url = https://github.com/opscode-cookbooks/apache2.git
+[submodule "sandbox/cookbooks/mysql"]
+	path = sandbox/cookbooks/mysql
+	url = https://github.com/opscode-cookbooks/mysql.git
+[submodule "sandbox/cookbooks/php"]
+	path = sandbox/cookbooks/php
+	url = https://github.com/opscode-cookbooks/php.git
+[submodule "sandbox/cookbooks/openssl"]
+	path = sandbox/cookbooks/openssl
+	url = https://github.com/opscode-cookbooks/openssl.git
