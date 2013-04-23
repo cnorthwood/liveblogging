@@ -197,6 +197,7 @@ resolve the issue for you.
 = trunk =
 
 * added Slovak language support (thanks to Brance Radenovich)
+* added Italian language support (thanks to Max Guglielmino)
 
 = 2.2.6 =
 
@@ -328,3 +329,4 @@ Blogging v2.
 * Persian language: Rasoul Moshrefizadeh
 * Lithuanian language: Vincent G from http://www.host1free.com/
 * Slovak Language: Branco, Slovak translation (<a href="http://webhostinggeeks.com/user-reviews/">WebHostingGeeks.com</a>)
+* Italian language: Max Guglielmino
