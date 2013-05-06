@@ -20,7 +20,10 @@
 
 class LiveBlogging_Setting_DateStyle extends LiveBlogging_Setting
 {
-	protected static $setting_name  = 'liveblogging_date_style';
+	public static $setting_name     = 'liveblogging_date_style';
 	protected static $default_value = 'H.i';
 
+	public static function admin_label() {
+		_e( 'Date specifier for live blog entries (see <a href="http://uk3.php.net/manual/en/function.date.php">PHP\'s date function</a> for allowable strings)', 'live-blogging' );
+	}
 }

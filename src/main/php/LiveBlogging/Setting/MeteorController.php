@@ -20,5 +20,9 @@
 
 class LiveBlogging_Setting_MeteorController extends LiveBlogging_Setting
 {
-	protected static $setting_name = 'liveblogging_meteor_controller';
+	public static $setting_name = 'liveblogging_meteor_controller';
+
+	public static function admin_label() {
+		_e( 'Meteor Controller Host (the private IP of the Meteor server - can be left blank if not using Meteor)', 'live-blogging' );
+	}
 }

@@ -20,10 +20,22 @@
 
 class LiveBlogging_Setting_TwitterComments extends LiveBlogging_Setting
 {
-	protected static $setting_name = 'liveblogging_disable_twitter_comments';
+	public static $setting_name = 'liveblogging_disable_twitter_comments';
 
 	public static function is_enabled() {
 		return ! parent::is_enabled();
+	}
+
+	public static function admin_label() {
+		_e( 'Disable importing comments from Twitter', 'live-blogging' );
+	}
+
+	public static function render_admin_options() { ?>
+		<input type="checkbox"
+			   name="<?php echo esc_attr( self::$setting_name ); ?>"
+			   value="1"
+			<?php checked( ! self::is_enabled() ); ?> />
+	<?php
 	}
 
 }

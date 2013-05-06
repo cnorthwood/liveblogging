@@ -21,7 +21,7 @@
 abstract class LiveBlogging_Setting
 {
 
-	protected static $setting_name;
+	public static $setting_name;
 	protected static $default_value;
 
 	public function register_setting() {
@@ -49,4 +49,11 @@ abstract class LiveBlogging_Setting
 	public static function is_enabled() {
 		return self::is( '1' );
 	}
+
+	public static function admin_label() {}
+
+	public static function render_admin_options() {
+		?><input type="text" name="<?php echo esc_attr( self::$setting_name ); ?>" value="<?php echo esc_attr( self::get() ); ?>" /><?php
+	}
+
 }

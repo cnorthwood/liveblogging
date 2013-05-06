@@ -20,6 +20,10 @@
 
 class LiveBlogging_Setting_MeteorNamespace extends LiveBlogging_Setting
 {
-	protected static $setting_name  = 'liveblogging_id';
+	public static $setting_name     = 'liveblogging_id';
 	protected static $default_value = 'liveblog';
+
+	public static function admin_label() {
+		_e( 'Meteor Identifier (a unique string to identify this WordPress install - can be left blank if not using Meteor)', 'live-blogging' );
+	}
 }

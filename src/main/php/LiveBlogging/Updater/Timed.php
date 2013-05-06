@@ -20,6 +20,14 @@
 
 class LiveBlogging_Updater_Timed
 {
-	public function __construct() {
+	public function javascript( $liveblog_id ) { ?>
+		<script type="text/javascript">
+			/*<![CDATA[ */
+			setTimeout(
+				function(){window.location.href=window.location.href},
+				<?php echo intval( LiveBlogging_Setting_TimedUpdatedFrequency::get() ) * 1000; ?>
+			);
+			/*]]>*/
+		</script><?php
 	}
 }

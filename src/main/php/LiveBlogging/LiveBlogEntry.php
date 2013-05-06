@@ -18,16 +18,32 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class LiveBlogging_Setting_Comments extends LiveBlogging_Setting
+class LiveBlogging_LiveBlogEntry
 {
-	public static $setting_name = 'liveblogging_comments';
+	public $id;
+	private $post;
 
-	public static function admin_label() {
-		_e( 'Enable auto-updating of comments (this will not work on some themes, please read the documentation!)', 'live-blogging' );
+	public function __construct( $post ) {
+		$this->post = $post;
+		$this->id   = $post->ID;
 	}
 
-	public static function render_admin_options() { ?>
-		<input type="checkbox" name="liveblogging_comments" value="1" <?php checked( self::is_enabled() ); ?> />
-	<?php
+	public function build_body() {
+		$style = get_option( 'liveblogging_style' );
+		$user  = get_userdata( $this->post->post_author );
+
+		LiveBlogging_Setting_ContentHooks::apply_unhooks();
+		$style = str_replace(
+			array( '$DATE', '$CONTENT', '$AUTHOR' ),
+			array(
+				get_the_time( get_option( 'liveblogging_date_style' ), $this->post ),
+				apply_filters( 'the_content', $this->post->post_content ),
+				apply_filters( 'the_author', $user->display_name ),
+			),
+			$style
+		);
+		LiveBlogging_Setting_ContentHooks::apply_hooks();
+
+		return $style;
 	}
 }

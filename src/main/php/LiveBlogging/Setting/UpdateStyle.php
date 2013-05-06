@@ -20,6 +20,22 @@
 
 class LiveBlogging_Setting_UpdateStyle extends LiveBlogging_Setting
 {
-	protected static $setting_name  = 'liveblogging_update_effect';
+	public static $setting_name     = 'liveblogging_update_effect';
 	protected static $default_value = 'top';
+
+	public static function admin_label() {
+		_e( 'How should new entries appear?', 'live-blogging' );
+	}
+
+	public static function render_admin_options() { ?>
+		<select name='liveblogging_update_effect'>
+			<option value="top" <?php selected( self::get(), 'top' ); ?>>
+				<?php _e( 'The latest entry at the top', 'live-blogging' ); ?>
+			</option>
+			<option value="bottom" <?php selected( self::get(), 'bottom' ); ?>>
+				<?php _e( 'The latest entry at the bottom', 'live-blogging' ); ?>
+			</option>
+		</select>
+	<?php
+	}
 }

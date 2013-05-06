@@ -20,7 +20,16 @@
 
 class LiveBlogging_Setting_PostStyle extends LiveBlogging_Setting
 {
-	protected static $setting_name = 'liveblogging_style';
+	public static $setting_name     = 'liveblogging_style';
 	protected static $default_value = '<p><strong>$DATE</strong></p>$CONTENT<div style="width:100%; height:1px; background-color:#6f6f6f; margin-bottom:3px;"></div>';
+
+	public static function admin_label() {
+		_e( 'Style for live blogging entries ($DATE gets replaced with the entry date/time, in the format specified above, $CONTENT with the body of the entry and $AUTHOR with the name of that author)', 'live-blogging' );
+	}
+
+	public static function render_admin_options() { ?>
+		<textarea name="<?php echo esc_attr( self::$setting_name ); ?>" cols="60" rows="8"><?php echo esc_html( get_option( 'liveblogging_style' ) ); ?></textarea>
+	<?php
+	}
 
 }

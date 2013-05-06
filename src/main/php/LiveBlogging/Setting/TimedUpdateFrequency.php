@@ -20,7 +20,8 @@
 
 class LiveBlogging_Setting_TimedUpdatedFrequency extends LiveBlogging_Setting
 {
-	protected static $setting_name = 'liveblogging_timed_update_freq';
+	public static $setting_name     = 'liveblogging_timed_update_freq';
+	protected static $default_value = 25;
 
 	/**
 	 * Sanitize the value for timed updates and ensure reasonable max/min values.
@@ -31,5 +32,9 @@ class LiveBlogging_Setting_TimedUpdatedFrequency extends LiveBlogging_Setting
 	 */
 	public function sanitise_setting( $input ) {
 		return abs( round( intval( $input ) ) );
+	}
+
+	public static function admin_label() {
+		_e( 'Number of seconds between page refreshes (min 15, max 180) in timed update mode', 'live-blogging' );
 	}
 }

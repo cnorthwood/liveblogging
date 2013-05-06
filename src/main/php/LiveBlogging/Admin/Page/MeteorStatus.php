@@ -18,16 +18,30 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class LiveBlogging_Setting_Comments extends LiveBlogging_Setting
+class LiveBlogging_Admin_Page_MeteorStatus
 {
-	public static $setting_name = 'liveblogging_comments';
-
-	public static function admin_label() {
-		_e( 'Enable auto-updating of comments (this will not work on some themes, please read the documentation!)', 'live-blogging' );
+	public function register_page() {
+		if ( LiveBlogging_Setting_UpdateMethod::is_meteor() ) {
+			add_submenu_page(
+				'index.php',
+				__( 'Meteor Status', 'live-blogging' ),
+				__( 'Meteor Status', 'live-blogging' ),
+				'manage_options',
+				'live-blogging-meteor-status',
+				array( $this, 'render_page' )
+			);
+		}
 	}
 
-	public static function render_admin_options() { ?>
-		<input type="checkbox" name="liveblogging_comments" value="1" <?php checked( self::is_enabled() ); ?> />
-	<?php
+	public function render_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( __( 'Access Denied', 'live-blogging' ) );
+		} else { ?>
+		<div class="wrap">
+			<h2><?php _e( 'Meteor Status', 'live-blogging' ); ?></h2>
+    		<pre><?php LiveBlogging::get_instance()->updater->fetch_stats(); ?></pre>
+		</div><?php
+		}
 	}
+
 }

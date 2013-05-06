@@ -2,7 +2,7 @@
 Contributors: chrisnorthwood
 Tags: live, micro, JavaScript, blogging, event, automatic updating, auto updating
 Requires at least: 3.0
-Tested up to: 3.3.1
+Tested up to: 3.5.1
 Stable tag: 2.2.6
 
 Live Blogging is a plugin that allows you to insert micro/live blogs into posts
@@ -194,8 +194,9 @@ resolve the issue for you.
 
 == Changelog ==
 
-= trunk =
+= 2.3 =
 
+* significant code refactor
 * added Slovak language support (thanks to Brance Radenovich)
 * added Italian language support (thanks to Max Guglielmino)
 

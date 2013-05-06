@@ -18,16 +18,15 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-class LiveBlogging_Setting_Comments extends LiveBlogging_Setting
+class LiveBlogging_Admin_MetaBox_Chatbox extends LiveBlogging_Admin_MetaBox
 {
-	public static $setting_name = 'liveblogging_comments';
-
-	public static function admin_label() {
-		_e( 'Enable auto-updating of comments (this will not work on some themes, please read the documentation!)', 'live-blogging' );
-	}
-
-	public static function render_admin_options() { ?>
-		<input type="checkbox" name="liveblogging_comments" value="1" <?php checked( self::is_enabled() ); ?> />
-	<?php
+	public function register_meta_box() {
+		add_meta_box(
+			'live_blogging_chatbox',
+			__( 'Entries', 'live-blogging' ),
+			'live_blogging_chatbox',
+			'liveblog_entry',
+			'normal'
+		);
 	}
 }

@@ -20,7 +20,7 @@
 
 class LiveBlogging_Setting_UpdateMethod extends LiveBlogging_Setting
 {
-	protected static $setting_name  = 'liveblogging_method';
+	public static $setting_name     = 'liveblogging_method';
 	protected static $default_value = 'poll';
 
 	public function sanitise_setting( $input ) {
@@ -50,6 +50,27 @@ class LiveBlogging_Setting_UpdateMethod extends LiveBlogging_Setting
 
 	public static function is_timed() {
 		return self::is( 'timed' );
+	}
+
+	public static function admin_label() {
+		_e( 'Method to use for live blog reader updating', 'live-blogging' );
+	}
+
+	public static function render_admin_options() { ?>
+		<select name='liveblogging_method'>
+			<option value="poll" <?php selected( self::is_ajax() ); ?>>
+				<?php _e( 'Poll (default, requires no special configuration)', 'live-blogging' ); ?>
+			</option>
+			<option value="meteor" <?php selected( self::is_meteor() ); ?>>
+				<?php _e( 'Stream using Meteor (lower server load and faster updates, but needs special configuration)', 'live-blogging' ); ?>
+			</option>
+			<option value="timed" <?php selected( self::is_timed() ); ?>>
+				<?php _e( 'Do a full page refresh every X seconds', 'live-blogging' ); ?>
+			</option>
+			<option value="disabled" <?php selected( ! self::is_enabled() ); ?>>
+				<?php _e( 'Disable automatic updates', 'live-blogging' ); ?>
+			</option>
+		</select><?php
 	}
 
 }

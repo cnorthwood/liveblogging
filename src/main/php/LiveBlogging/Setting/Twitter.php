@@ -20,5 +20,17 @@
 
 class LiveBlogging_Setting_Twitter extends LiveBlogging_Setting
 {
-	protected static $setting_name = 'liveblogging_enable_twitter';
+	public static $setting_name = 'liveblogging_enable_twitter';
+
+	public static function admin_label() {
+		_e( 'Enable posting to Twitter', 'live-blogging' );
+	}
+
+	public static function render_admin_options() { ?>
+		<input type="checkbox"
+			   name="<?php echo esc_attr( self::$setting_name ); ?>"
+			   value="1"
+			<?php checked( self::is_enabled() ); ?> />
+	<?php
+	}
 }

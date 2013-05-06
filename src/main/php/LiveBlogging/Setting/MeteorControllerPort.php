@@ -20,9 +20,13 @@
 
 class LiveBlogging_Setting_MeteorControllerPort extends LiveBlogging_Setting
 {
-	protected static $setting_name = 'liveblogging_meteor_controller_port';
+	public static $setting_name = 'liveblogging_meteor_controller_port';
 
 	public function sanitise_setting( $value ) {
 		return intval( $value );
+	}
+
+	public static function admin_label() {
+		_e( 'Meteor Controller Port (can be left blank if not using Meteor)', 'live-blogging' );
 	}
 }

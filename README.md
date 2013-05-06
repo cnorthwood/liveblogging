@@ -36,7 +36,8 @@ Using the development version of it
     vagrant up
 
 This will start a VM at http://192.168.20.10 with a blank WordPress blog for you to experiment with. This
-must be running for the Cucumber tests to run. The database is wiped on every load of the sandbox.
+must be running for the Cucumber tests to run. The database is wiped on every load of the sandbox. The username and
+password for the WordPress admin is admin and cucumber.
 
 Alternatively, you can run
 

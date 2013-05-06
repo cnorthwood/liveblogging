@@ -20,5 +20,9 @@
 
 class LiveBlogging_Setting_MeteorSubscriber extends LiveBlogging_Setting
 {
-	protected static $setting_name = 'liveblogging_meteor_host';
+	public static $setting_name = 'liveblogging_meteor_host';
+
+	public static function admin_label() {
+		_e( 'Meteor Subscriber Host (the publicly accessible URL of your Meteor server - can be left blank if not using Meteor)', 'live-blogging' );
+	}
 }

@@ -18,6 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+if ( ! class_exists( 'TwitterOAuth' ) ) {
+	require( 'twitteroauth/twitteroauth.php' );
+}
+
+require( 'LiveBlogging/Admin/MetaBox.php' );
+require( 'LiveBlogging/Admin/MetaBox/Chatbox.php' );
+require( 'LiveBlogging/Admin/MetaBox/Enable.php' );
+require( 'LiveBlogging/Admin/MetaBox/QuickUpload.php' );
+require( 'LiveBlogging/Admin/MetaBox/Select.php' );
+require( 'LiveBlogging/Admin/Page/MeteorStatus.php' );
+require( 'LiveBlogging/Admin/Page/Migrate.php' );
+require( 'LiveBlogging/Admin/Page/Options.php' );
+require( 'LiveBlogging/Legacy.php' );
 require( 'LiveBlogging/Setting.php' );
 require( 'LiveBlogging/Setting/Comments.php' );
 require( 'LiveBlogging/Setting/ContentHooks.php' );
@@ -40,9 +53,21 @@ require( 'LiveBlogging/Twitter.php' );
 class LiveBlogging
 {
 
+	private static $instance;
+
+	public static function get_instance() {
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
 	/** @var LiveBlogging_Setting[] */
 	protected $settings = array();
-	protected $updater;
+	/** @var LiveBlogging_Admin_MetaBox[] */
+	protected $meta_boxes  = array();
+	protected $admin_pages = array();
+	public $updater;
 
 	public function __construct() {
 		$this->settings[] = new LiveBlogging_Setting_Comments();
@@ -59,15 +84,32 @@ class LiveBlogging
 		$this->settings[] = new LiveBlogging_Setting_UpdateMethod();
 		$this->settings[] = new LiveBlogging_Setting_UpdateStyle();
 
+		$this->meta_boxes[] = new LiveBlogging_Admin_MetaBox_Chatbox();
+		$this->meta_boxes[] = new LiveBlogging_Admin_MetaBox_Enable();
+		$this->meta_boxes[] = new LiveBlogging_Admin_MetaBox_QuickUpload();
+		$this->meta_boxes[] = new LiveBlogging_Admin_MetaBox_Select();
+
+		$this->admin_pages[] = new LiveBlogging_Admin_Page_MeteorStatus();
+		$this->admin_pages[] = new LiveBlogging_Admin_Page_Migrate();
+		$this->admin_pages[] = new LiveBlogging_Admin_Page_Options();
+
 		$this->twitter = new LiveBlogging_Twitter();
 	}
 
 	public function init() {
+		add_action( 'init', array( $this, 'plugin_init' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		register_activation_hook( __FILE__, array( $this, 'activate_plugin' ) );
+		register_deactivation_hook( __FILE__, array( $this, 'deactivate_plugin' ) );
+		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+	}
+
+	public function plugin_init() {
 		$this->load_language_resources();
 		$this->register_taxonomy();
 		$this->register_custom_post_type();
 		$this->load_updater();
-		$this->twitter->setup_timer();
+		$this->twitter->init();
 	}
 
 	private function load_updater() {
@@ -146,5 +188,14 @@ class LiveBlogging
 
 	public function deactivate_plugin() {
 		wp_clear_scheduled_hook( 'live_blogging_check_twitter' );
+	}
+
+	public function add_admin_menu() {
+		foreach ( $this->meta_boxes as $meta_box ) {
+			$meta_box->register_meta_box();
+		}
+		foreach ( $this->admin_pages as $admin_page ) {
+			$admin_page->register_page();
+		}
 	}
 }
