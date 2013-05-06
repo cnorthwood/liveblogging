@@ -18,8 +18,6 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-
-
 class LiveBlogging_Twitter
 {
 	const CONSUMER_KEY    = '22fYrtLcFGqNMWNPel0Wfw';
@@ -51,7 +49,7 @@ class LiveBlogging_Twitter
 
 	public function schedule_frequency( $schedules ) {
 		$schedules['live_blogging'] = array(
-			'display'  =>  __( 'Every 5 minutes', 'live-blogging' ),
+			'display'  => __( 'Every 5 minutes', 'live-blogging' ),
 			'interval' => 300,
 		);
 		return $schedules;
