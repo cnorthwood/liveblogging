@@ -3,3 +3,6 @@ build
 .idea
 *.iml
 sandbox/.vagrant
+libs/PHP_CodeSniffer-*
+libs/phpunit.phar
+libs/package.xml

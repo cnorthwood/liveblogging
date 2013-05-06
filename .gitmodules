@@ -1,9 +1,3 @@
-[submodule "libs/PHP_CodeSniffer"]
-	path = libs/PHP_CodeSniffer
-	url = git://github.com/pear/PHP_CodeSniffer.git
-[submodule "libs/phpunit"]
-	path = libs/phpunit
-	url = https://github.com/sebastianbergmann/phpunit.git
 [submodule "sandbox/cookbooks/wordpress"]
 	path = sandbox/cookbooks/wordpress
 	url = https://github.com/opscode-cookbooks/wordpress.git

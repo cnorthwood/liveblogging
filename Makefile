@@ -12,6 +12,7 @@ YUICOMPRESSOR=libs/yuicompressor-2.4.7.jar
 JSLINT=libs/jslint4java-2.0.2.jar
 JSTESTDRIVER=libs/JsTestDriver-1.3.5.jar
 BROWSER=open
+PHPCS_VERSION=1.4.5
 
 dist: $(PHP_LIBS) $(PHP_FILES) $(IMG_FILES) $(LANGUAGE_FILES) build/live-blogging.min.js build/readme.txt build/LICENSE
 
@@ -20,8 +21,12 @@ clean:
 
 test: phpunit jstestdriver
 
-phpunit:
-	libs/phpunit/phpunit.php -c src/test/php/phpunit.xml
+libs/phpunit.phar:
+	(cd libs && wget http://pear.phpunit.de/get/phpunit.phar)
+	chmod +x libs/phpunit.phar
+
+phpunit: libs/phpunit.phar
+	libs/phpunit.phar -c src/test/php/phpunit.xml
 
 jstestdriver:
 	java -jar $(JSTESTDRIVER) --reset --port 9874 --browser $(BROWSER) --tests all
@@ -37,8 +42,14 @@ strict: jslint phpcs
 jslint:
 	java -jar $(JSLINT) $(JS_SRC)
 
-phpcs: $(PHP_FILES)
-	php libs/PHP_CodeSniffer/scripts/phpcs $(PHP_FILES)
+libs/PHP_CodeSniffer-%/scripts/phpcs:
+	(cd libs && wget http://download.pear.php.net/package/PHP_CodeSniffer-$(PHPCS_VERSION).tgz && tar zxf PHP_CodeSniffer-$(PHPCS_VERSION).tgz)
+
+libs/PHP_CodeSniffer-%/CodeSniffer/Standards/WordPress/ruleset.xml:
+	(cd libs/PHP_CodeSniffer-$(PHPCS_VERSION)/CodeSniffer/Standards/ && wget https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/master.tar.gz && tar zxf master.tar.gz && mv WordPress-Coding-Standards-master WordPress)
+
+phpcs: libs/PHP_CodeSniffer-$(PHPCS_VERSION)/scripts/phpcs libs/PHP_CodeSniffer-$(PHPCS_VERSION)/CodeSniffer/Standards/WordPress/ruleset.xml $(PHP_FILES)
+	php libs/PHP_CodeSniffer-$(PHPCS_VERSION)/scripts/phpcs --standard=WordPress $(PHP_FILES)
 
 build/live-blogging.min.js: build $(JS_SRC)
 	java -jar $(YUICOMPRESSOR) -o build/live-blogging.min.js $(JS_SRC)
