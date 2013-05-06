@@ -78,6 +78,7 @@ build/readme.txt: resources/readme.txt
 	cp resources/readme.txt build/readme.txt
 
 checkoutsvn:
+	rm -rf build
 	svn co http://plugins.svn.wordpress.org/live-blogging/trunk build
 
 pushtowordpress: checkoutsvn dist
