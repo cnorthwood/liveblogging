@@ -29,7 +29,7 @@ phpunit: libs/phpunit.phar
 	libs/phpunit.phar -c src/test/php/phpunit.xml
 
 jstestdriver:
-	java -jar $(JSTESTDRIVER) --reset --port 9874 --browser $(BROWSER) --tests all
+	java -jar $(JSTESTDRIVER) --reset --port 9874 --browser $(BROWSER) --tests all --config config.jstd
 
 cucumber: sandbox
 	(cd src/test/cucumber && bundle && bundle exec cucumber)
