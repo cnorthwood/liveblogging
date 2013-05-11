@@ -48,8 +48,8 @@ libs/PHP_CodeSniffer-%/scripts/phpcs:
 libs/PHP_CodeSniffer-%/CodeSniffer/Standards/WordPress/ruleset.xml:
 	(cd libs/PHP_CodeSniffer-$(PHPCS_VERSION)/CodeSniffer/Standards/ && wget https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/master.tar.gz && tar zxf master.tar.gz && mv WordPress-Coding-Standards-master WordPress)
 
-phpcs: libs/PHP_CodeSniffer-$(PHPCS_VERSION)/scripts/phpcs libs/PHP_CodeSniffer-$(PHPCS_VERSION)/CodeSniffer/Standards/WordPress/ruleset.xml $(PHP_FILES)
-	php libs/PHP_CodeSniffer-$(PHPCS_VERSION)/scripts/phpcs --standard=WordPress $(PHP_FILES)
+phpcs: libs/PHP_CodeSniffer-$(PHPCS_VERSION)/scripts/phpcs libs/PHP_CodeSniffer-$(PHPCS_VERSION)/CodeSniffer/Standards/WordPress/ruleset.xml
+	php libs/PHP_CodeSniffer-$(PHPCS_VERSION)/scripts/phpcs --standard=WordPress src/main/php
 
 build/live-blogging.min.js: build $(JS_SRC)
 	java -jar $(YUICOMPRESSOR) -o build/live-blogging.min.js $(JS_SRC)

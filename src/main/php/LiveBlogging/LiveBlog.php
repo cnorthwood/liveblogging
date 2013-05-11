@@ -71,6 +71,9 @@ class LiveBlogging_LiveBlog
 		return $comments;
 	}
 
+	/**
+	 * @return LiveBlogging_LiveBlogEntry[]
+	 */
 	public function get_liveblog_entries() {
 		$entries = array();
 		$q = new WP_Query(

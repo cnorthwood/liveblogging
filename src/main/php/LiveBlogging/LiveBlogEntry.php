@@ -46,4 +46,10 @@ class LiveBlogging_LiveBlogEntry
 
 		return $style;
 	}
+
+	public function body() {
+		// @codingStandardsIgnoreStart
+		echo $this->build_body();
+		// @codingStandardsIgnoreEnd
+	}
 }

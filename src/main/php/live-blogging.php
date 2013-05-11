@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Live Blogging
-Plugin URI: http://wordpress.org/extend/plugins/live-blogging/
+Plugin URI: http://cnorthwood.github.io/liveblogging/
 Description: Plugin to support automatic live blogging
 Version: 2.3
 Author: Chris Northwood
@@ -10,7 +10,7 @@ Text-Domain: live-blogging
 
 Live Blogging for WordPress
 Copyright (C) 2010-2013 Chris Northwood <chris@pling.org.uk>
-Contributors: Gabriel Koen, Corey Gilmore
+Contributors: Gabriel Koen, Corey Gilmore, Juliette
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ if ( is_admin() ) {
 
 				function live_blogging_update_chatbox() {
 					jQuery.post(
-						"<?php echo admin_url('admin-ajax.php'); ?>",
+						"<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>",
 						{
 							action: "live_blogging_update_chatbox",
 							liveblog_id: get_selected_liveblog_post_id()
@@ -205,30 +205,21 @@ if ( is_admin() ) {
 		}
 		$liveblog_id   = (int)$_GET['live_blogging_entry_post'];
 		$liveblog_sort = 'ASC';
-		$output        = live_blog_chatbox_get_posts( $liveblog_id, $liveblog_sort );
-		echo $output;
+		live_blog_chatbox_get_posts( $liveblog_id, $liveblog_sort );
 	}
 
 	function live_blog_chatbox_get_posts( $liveblog_id, $liveblog_sort = 'DESC' ) {
-		$liveblog = new WP_Query(
-			array(
-				'post_type'      => 'liveblog_entry',
-				'liveblog'       => $liveblog_id,
-				'posts_per_page' => - 1,
-				'orderby'        => 'date',
-				'order'          => $liveblog_sort,
-			)
-		);
-		$output = '';
-		if ( $liveblog->have_posts() ) {
-			$output .= '<div class="liveblog-entries">';
-			while ( $liveblog->have_posts() ) {
-				$liveblog->next_post();
-				$output .= '<div id="liveblog-entry-' . $liveblog->post->ID . '">' . live_blogging_get_entry( $liveblog->post ) . '</div>';
-			}
-			$output .= '</div>';
-		}
-		return $output;
+		$liveblog         = new LiveBlogging_LiveBlog( intval( $liveblog_id ) );
+		$liveblog_entries = $liveblog->get_liveblog_entries();
+		if ( ! empty ( $liveblog_entries ) ) : ?>
+			<div class="liveblog-entries">
+				<?php foreach ( $liveblog_entries as $liveblog_entry ) : ?>
+					<div id="liveblog-entry-<?php echo esc_attr( $liveblog_entry->id ); ?>">
+						<?php $liveblog_entry->body(); ?>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		<?php endif;
 	}
 
 	function live_blogging_update_chatbox() {
@@ -236,8 +227,9 @@ if ( is_admin() ) {
 		if ( ! isset( $_POST['liveblog_id'] ) ) {
 			die();
 		}
-		$liveblog_id = (int)$_POST['liveblog_id'];
-		$response    = live_blog_chatbox_get_posts( $liveblog_id );
+		ob_start();
+		live_blog_chatbox_get_posts( (int)$_POST['liveblog_id'] );
+		$response = ob_end_clean();
 		echo json_encode( $response );
 		die();
 	}
@@ -281,7 +273,8 @@ function live_blogging_fix_title( $title, $id = 0 ) {
 }
 
 function live_blogging_taxonomy_name( $tax ) {
-	if ( 'legacy' == substr( $tax->name, 0, 6 ) ) {
+	if ( substr( $tax->name, 0, 6 ) == 'legacy' )
+	{
 		return $tax->description;
 	}
 
