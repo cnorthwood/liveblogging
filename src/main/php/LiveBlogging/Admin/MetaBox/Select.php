@@ -36,7 +36,7 @@ class LiveBlogging_Admin_MetaBox_Select extends LiveBlogging_Admin_MetaBox
 		$liveblogs = array_merge(
 			$this->get_active_liveblogs( 'post' ),
 			$this->get_active_liveblogs( 'page' ),
-			$this->get_liveblogs_for_current_post()
+			LiveBlogging_LiveBlogPost::get_liveblogs_for_current_post()
 		);
 
 		if ( count( $liveblogs ) == 0 ) {
@@ -85,16 +85,6 @@ class LiveBlogging_Admin_MetaBox_Select extends LiveBlogging_Admin_MetaBox
 		return $liveblogs;
 	}
 
-	public function get_liveblogs_for_current_post() {
-		global $post;
-		$liveblogs = array();
-		$associated_live_blogs = wp_get_object_terms( array( $post->ID ), 'liveblog' );
-		foreach ( $associated_live_blogs as $liveblog_id ) {
-			$liveblogs[$liveblog_id->name] = live_blogging_taxonomy_name( $liveblog_id );
-		}
-		return $liveblogs;
-	}
-
 	/**
 	 * Attempts to figure out which liveblog the user wants to use - either the one sent in the last save, or
 	 * one of the ones associated with this page (there should only be 1)
@@ -105,7 +95,7 @@ class LiveBlogging_Admin_MetaBox_Select extends LiveBlogging_Admin_MetaBox
 		if ( isset( $_GET['live_blogging_entry_post'] ) ) {
 			return $_GET['live_blogging_entry_post'];
 		} else {
-			$associated_liveblogs = $this->get_liveblogs_for_current_post();
+			$associated_liveblogs = LiveBlogging_LiveBlogPost::get_liveblogs_for_current_post();
 			if ( ! empty( $associated_liveblogs ) ) {
 				return $associated_liveblogs[0];
 			} else {

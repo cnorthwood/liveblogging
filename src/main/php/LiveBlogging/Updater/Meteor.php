@@ -88,19 +88,21 @@ class LiveBlogging_Updater_Meteor
 	}
 
 	public function publish_entry( $id, $entry ) {
-		$liveblogs = wp_get_object_terms( array( $id ), 'liveblog' );
+		$post      = new LiveBlogging_LiveBlogPost( $id );
+		$entry     = new LiveBlogging_LiveBlogEntry( $entry );
+		$liveblogs = $post->get_liveblogs();
 		if ( isset( $_POST['live_blogging_entry_post'] ) ) {
-			$liveblogs[] = (object)array( 'name' => $_POST['live_blogging_entry_post'] );
+			$liveblogs[] = new LiveBlogging_LiveBlog( $_POST['live_blogging_entry_post'] );
 		}
 		$entries_to_submit = array();
 		foreach ( $liveblogs as $liveblog ) {
 			$message_body = array(
-				'liveblog' => $liveblog->name,
+				'liveblog' => $liveblog->post_id(),
 				'id' => $id,
 				'type' => 'entry',
-				'html' => live_blogging_get_entry( $entry ),
+				'html' => $entry->build_body(),
 			);
-			$entries_to_submit[] = 'ADDMESSAGE ' . get_option( 'liveblogging_id' ) . '-liveblog-' . $liveblog->name
+			$entries_to_submit[] = 'ADDMESSAGE ' . get_option( 'liveblogging_id' ) . '-liveblog-' . $liveblog->post_id()
 				. ' ' . addslashes( json_encode( $message_body ) );
 		}
 		$this->run_meteor_command( $entries_to_submit );
@@ -127,7 +129,7 @@ class LiveBlogging_Updater_Meteor
 
 	public function publish_comments( $id ) {
 		$comment      = get_comment( $id );
-		$liveblog     = new LiveBlogging_LiveBlog( $comment->comment_post_ID );
+		$liveblog     = new LiveBlogging_LiveBlogPost( $comment->comment_post_ID );
 		$message_body = array(
 			'liveblog' => $comment->comment_post_ID,
 			'type'     => 'comments',

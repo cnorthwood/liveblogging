@@ -1,9 +1,9 @@
 JS_SRC=src/main/js/live-blogging.js
 PHP_LIBS=libs/twitteroauth/
-PHP_FILES=build/live-blogging.php build/twittercallback.php build/LiveBlogging.php \
+PHP_FILES=build/live-blogging.php build/twittercallback.php build/LiveBlogging.php build/LiveBlogging/Admin/RichTextEditor.php \
           build/LiveBlogging/Admin/MetaBox.php build/LiveBlogging/Admin/MetaBox/Chatbox.php build/LiveBlogging/Admin/MetaBox/Enable.php build/LiveBlogging/Admin/MetaBox/QuickUpload.php build/LiveBlogging/Admin/MetaBox/Select.php \
-          build/LiveBlogging/Admin/Page/MeteorStatus.php build/LiveBlogging/Admin/Page/Migrate.php build/LiveBlogging/Admin/Page/Options.php \
-          build/LiveBlogging/Legacy.php build/LiveBlogging/LiveBlog.php build/LiveBlogging/LiveBlogEntry.php build/LiveBlogging/Twitter.php \
+          build/LiveBlogging/Admin/Page/EditList.php build/LiveBlogging/Admin/Page/MeteorStatus.php build/LiveBlogging/Admin/Page/Migrate.php build/LiveBlogging/Admin/Page/Options.php build/LiveBlogging/Admin/Page/Save.php \
+          build/LiveBlogging/Legacy.php build/LiveBlogging/LiveBlog.php build/LiveBlogging/LiveBlogEntry.php build/LiveBlogging/LiveBlogPost.php build/LiveBlogging/Twitter.php \
           build/LiveBlogging/Setting.php build/LiveBlogging/Setting/Comments.php build/LiveBlogging/Setting/ContentHooks.php build/LiveBlogging/Setting/DateStyle.php build/LiveBlogging/Setting/MeteorController.php build/LiveBlogging/Setting/MeteorControllerPort.php build/LiveBlogging/Setting/MeteorNamespace.php build/LiveBlogging/Setting/MeteorSubscriber.php build/LiveBlogging/Setting/PostStyle.php build/LiveBlogging/Setting/TimedUpdateFrequency.php build/LiveBlogging/Setting/Twitter.php build/LiveBlogging/Setting/TwitterComments.php build/LiveBlogging/Setting/UpdateMethod.php build/LiveBlogging/Setting/UpdateStyle.php \
           build/LiveBlogging/Updater/Ajax.php build/LiveBlogging/Updater/Meteor.php build/LiveBlogging/Updater/Timed.php
 IMG_FILES=build/img/add.png build/img/delete.png build/img/icon.png

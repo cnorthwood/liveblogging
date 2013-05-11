@@ -18,26 +18,28 @@
 	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-abstract class LiveBlogging_Admin_MetaBox {
+class LiveBlogging_Admin_RichTextEditor {
 
-	abstract public function register_meta_box();
-
-	/**
-	 * This method checks if the received save call is actually that of a final save, and not just an interim auto-save
-	 * and that the request is valid and the user has correct permissions
-	 *
-	 * @param $post_id
-	 * @param $nonce_key string the Nonce key to check
-	 *
-	 * @return bool
-	 */
-	protected function okay_to_save( $post_id, $nonce_key ) {
-		return check_admin_referer( 'live_blogging_' . $nonce_key . '_meta', 'live_blogging_' . $nonce_key . '_nonce' )
-			&& ! $this->doing_autosave()
-			&& current_user_can( 'edit_post', $post_id );
+	public function __construct() {
+		add_action( 'media_buttons_context', array( $this, 'insert_shortcode_button' ) );
+		add_action( 'admin_head', array( $this, 'insert_shortcode_js' ) );
+		add_shortcode( 'liveblog', 'live_blogging_shortcode' );
 	}
 
-	protected function doing_autosave() {
-		return ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! isset( $_POST['live_blogging_post_nonce'] );
+	public function insert_shortcode_button( $context ) {
+		$additional = '<a class="button" style="cursor:pointer;" onclick="live_blog_insert_shortcode();" id="insert-live-blog-shortcode">Live Blog</a>';
+		return $context . $additional;
 	}
+
+	public function insert_shortcode_js() {
+		?>
+		<script type="text/javascript">
+			function live_blog_insert_shortcode() {
+				var win = window.dialogArguments || opener || parent || top;
+				win.send_to_editor("[liveblog]");
+			}
+		</script>
+	<?php
+	}
+
 }

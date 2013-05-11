@@ -23,79 +23,46 @@ class LiveBlogging_Updater_Ajax
 	public function __construct() {
 		add_action( 'wp_ajax_live_blogging_poll', array( $this, 'handle_ajax' ) );
 		add_action( 'wp_ajax_nopriv_live_blogging_poll', array( $this, 'handle_ajax' ) );
-		add_action( 'delete_post', array( $this, 'mark_to_delete' ) );
-		add_action( 'trash_post', array( $this, 'mark_to_delete' ) );
-		add_action( 'publish_liveblog_entry', array( $this, 'mark_to_undelete' ), 10, 2 );
 	}
 
 	public function handle_ajax() {
 		header( 'Content-Type: application/json' );
-		$liveblog_id = $_POST['liveblog_id'];
+		$liveblog_id = intval( $_POST['liveblog_id'] );
+		$liveblog    = new LiveBlogging_LiveBlogPost( $liveblog_id );
+		$response    = array();
 
-		// Build currently active posts
-		$q = new WP_Query(
-			array(
-				'post_type'      => 'liveblog_entry',
-				'liveblog'       => $liveblog_id,
-				'posts_per_page' => -1,
-				'orderby'        => 'date',
-				'order'          => 'ASC',
-				'post_status'    => 'publish',
-			)
-		);
-		$r = array();
-		while ( $q->have_posts() ) {
-			$q->the_post();
-			$r[] = array(
+		foreach ( $liveblog->get_liveblog_entries() as $entry ) {
+			$response[] = array(
 				'liveblog' => $liveblog_id,
-				'id'       => $q->post->ID,
+				'id'       => $entry->id,
 				'type'     => 'entry',
-				'html'     => live_blogging_get_entry( $q->post ),
+				'html'     => $entry->build_body(),
 			);
 		}
 
 		foreach ( get_post_meta( $liveblog_id, '_liveblogging_deleted' ) as $deleted ) {
-			$r[] = array(
+			$response[] = array(
 				'liveblog' => $liveblog_id,
 				'id'       => $deleted,
 				'type'     => 'delete-entry',
 			);
 		}
-		if ( '1' == get_option( 'liveblogging_comments' ) ) {
-			$liveblog = new LiveBlogging_LiveBlog( $liveblog_id );
-			$r[] = array(
+		if ( LiveBlogging_Setting_Comments::is_enabled() ) {
+			$liveblog   = new LiveBlogging_LiveBlogPost( $liveblog_id );
+			$response[] = array(
 				'liveblog' => $liveblog_id,
 				'type'     => 'comments',
 				'html'     => $liveblog->build_comments_html(),
 			);
 		}
-		echo json_encode( $r );
+		echo json_encode( $response );
 		die();
-	}
-
-	public function mark_to_delete( $id ) {
-		$post = get_post( $id );
-		if ( 'liveblog_entry' == $post->post_type ) {
-			$liveblogs = wp_get_object_terms( array( $id ), 'liveblog' );
-			foreach ( $liveblogs as $liveblog ) {
-				add_post_meta( intval( $liveblog->name ), '_liveblogging_deleted', $id );
-			}
-		}
-	}
-
-	public function mark_to_undelete( $id, $post ) {
-		if ( 'liveblog_entry' == $post->post_type ) {
-			$liveblogs = wp_get_object_terms( array( $id ), 'liveblog' );
-			foreach ( $liveblogs as $liveblog ) {
-				delete_post_meta( intval( $liveblog->name ), '_liveblogging_deleted', $id );
-			}
-		}
 	}
 
 	public function javascript( $liveblog_id ) {  ?>
 		<script type="text/javascript">
 			/*<![CDATA[ */
-			setTimeout(function(){live_blogging_poll("<?php echo esc_attr( $liveblog_id ); ?>");}, 15000)
+			setTimeout(function(){live_blogging_poll("<?php echo esc_attr( $liveblog_id ); ?>");}, 15000);
 			/*]]>*/
 		</script><?php
 	}

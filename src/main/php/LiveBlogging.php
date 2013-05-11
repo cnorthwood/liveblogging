@@ -27,10 +27,16 @@ require( 'LiveBlogging/Admin/MetaBox/Chatbox.php' );
 require( 'LiveBlogging/Admin/MetaBox/Enable.php' );
 require( 'LiveBlogging/Admin/MetaBox/QuickUpload.php' );
 require( 'LiveBlogging/Admin/MetaBox/Select.php' );
+require( 'LiveBlogging/Admin/Page/EditList.php' );
 require( 'LiveBlogging/Admin/Page/MeteorStatus.php' );
 require( 'LiveBlogging/Admin/Page/Migrate.php' );
 require( 'LiveBlogging/Admin/Page/Options.php' );
+require( 'LiveBlogging/Admin/Page/Save.php' );
+require( 'LiveBlogging/Admin/RichTextEditor.php' );
 require( 'LiveBlogging/Legacy.php' );
+require( 'LiveBlogging/LiveBlog.php' );
+require( 'LiveBlogging/LiveBlogEntry.php' );
+require( 'LiveBlogging/LiveBlogPost.php' );
 require( 'LiveBlogging/Setting.php' );
 require( 'LiveBlogging/Setting/Comments.php' );
 require( 'LiveBlogging/Setting/ContentHooks.php' );
@@ -68,6 +74,7 @@ class LiveBlogging
 	protected $meta_boxes  = array();
 	protected $admin_pages = array();
 	public $updater;
+	public $rich_text_editor;
 
 	public function __construct() {
 		$this->settings[] = new LiveBlogging_Setting_Comments();
@@ -89,9 +96,13 @@ class LiveBlogging
 		$this->meta_boxes[] = new LiveBlogging_Admin_MetaBox_QuickUpload();
 		$this->meta_boxes[] = new LiveBlogging_Admin_MetaBox_Select();
 
+		$this->admin_pages[] = new LiveBlogging_Admin_Page_EditList();
 		$this->admin_pages[] = new LiveBlogging_Admin_Page_MeteorStatus();
 		$this->admin_pages[] = new LiveBlogging_Admin_Page_Migrate();
 		$this->admin_pages[] = new LiveBlogging_Admin_Page_Options();
+		$this->admin_pages[] = new LiveBlogging_Admin_Page_Save();
+
+		$this->rich_text_editor = new LiveBlogging_Admin_RichTextEditor();
 
 		$this->twitter = new LiveBlogging_Twitter();
 	}
@@ -102,6 +113,9 @@ class LiveBlogging
 		register_activation_hook( __FILE__, array( $this, 'activate_plugin' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate_plugin' ) );
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+		add_filter( 'the_title', array( 'LiveBlogging_LiveBlog', 'render_title' ), 10, 2 );
+		add_filter( 'wp_insert_post_data', array( 'LiveBlogging_LiveBlogPost', 'mark_parent_post_as_edited' ), 10, 1 );
+		add_filter( 'wp_insert_post_data', array( 'LiveBlogging_LiveBlogEntry', 'save_uploaded_files' ), 10, 2 );
 	}
 
 	public function plugin_init() {
