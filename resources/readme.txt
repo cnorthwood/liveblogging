@@ -199,6 +199,8 @@ resolve the issue for you.
 * significant code refactor
 * added Slovak language support (thanks to Brance Radenovich)
 * added Italian language support (thanks to Max Guglielmino)
+* fixed bug where dollar signs in live blog entries are treated as regex backreferences
+* added support for unhooking class methods (thanks to Juliette)
 
 = 2.2.6 =
 
