@@ -1,4 +1,6 @@
 source :rubygems
-gem "cucumber"
-gem "capybara"
-gem "rspec"
+gem 'cucumber'
+gem 'capybara'
+gem 'rspec'
+gem 'json', '~> 1.7.7'
+gem 'selenium-webdriver'
