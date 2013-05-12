@@ -25,12 +25,12 @@ abstract class LiveBlogging_Setting
 	protected static $default_value;
 
 	public function register_setting() {
-		register_setting( 'live-blogging', self::$setting_name, array( $this, 'sanitise_setting' ) );
+		register_setting( 'live-blogging', static::$setting_name, array( $this, 'sanitise_setting' ) );
 	}
 
 	public function activate_setting() {
-		if ( self::$default_value && false === get_option( self::$setting_name ) ) {
-			add_option( self::$setting_name, self::$default_value );
+		if ( static::$default_value && false === get_option( static::$setting_name ) ) {
+			add_option( static::$setting_name, static::$default_value );
 		}
 	}
 
@@ -39,21 +39,21 @@ abstract class LiveBlogging_Setting
 	}
 
 	public static function get() {
-		return get_option( self::$setting_name );
+		return get_option( static::$setting_name );
 	}
 
 	protected static function is( $value ) {
-		return $value == self::get();
+		return $value === static::get();
 	}
 
 	public static function is_enabled() {
-		return self::is( '1' );
+		return static::is( '1' );
 	}
 
 	public static function admin_label() {}
 
 	public static function render_admin_options() {
-		?><input type="text" name="<?php echo esc_attr( self::$setting_name ); ?>" value="<?php echo esc_attr( self::get() ); ?>" /><?php
+		?><input type="text" name="<?php echo esc_attr( static::$setting_name ); ?>" value="<?php echo esc_attr( static::get() ); ?>" /><?php
 	}
 
 }

@@ -23,7 +23,6 @@ class LiveBlogging_Admin_RichTextEditor {
 	public function __construct() {
 		add_action( 'media_buttons_context', array( $this, 'insert_shortcode_button' ) );
 		add_action( 'admin_head', array( $this, 'insert_shortcode_js' ) );
-		add_shortcode( 'liveblog', 'live_blogging_shortcode' );
 	}
 
 	public function insert_shortcode_button( $context ) {

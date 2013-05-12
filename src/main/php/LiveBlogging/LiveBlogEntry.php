@@ -110,7 +110,7 @@ class LiveBlogging_LiveBlogEntry
 	}
 
 	public function build_body() {
-		$style = get_option( 'liveblogging_style' );
+		$style = LiveBlogging_Setting_PostStyle::get();
 		$user  = get_userdata( $this->post->post_author );
 
 		LiveBlogging_Setting_ContentHooks::apply_unhooks();

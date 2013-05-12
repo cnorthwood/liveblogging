@@ -30,18 +30,16 @@ class LiveBlogging_LiveBlogPost
 		} else {
 			$id = $post->ID;
 		}
-		$liveblog    = new self( $id );
-		$parent_post = $post;
+		$liveblog = new self( $id );
 		ob_start();
 		if ( LiveBlogging_Setting_UpdateMethod::is_enabled() && $liveblog->is_active_liveblog() ) {
 			LiveBlogging::get_instance()->updater->javascript();
 		} ?>
 		<div id="liveblog-<?php echo esc_attr( $id ); ?>">
 			<?php foreach ( $liveblog->get_liveblog_entries() as $entry ) : ?>
-			<div id="liveblog-entry-<?php echo esc_attr( $entry->id ); ?>"><?php $entry->build_body(); ?></div>'
-		<?php endforeach; ?>
+				<div id="liveblog-entry-<?php echo esc_attr( $entry->id ); ?>"><?php $entry->body(); ?></div>
+			<?php endforeach; ?>
 		</div><?php
-		$post    = $parent_post;
 		$content = ob_get_contents();
 		ob_end_clean();
 		return $content;
@@ -104,7 +102,7 @@ class LiveBlogging_LiveBlogPost
 		$q = new WP_Query(
 			array(
 				'post_type'      => 'liveblog_entry',
-				'liveblog'       => $this->post_id,
+				'liveblog'       => strval( $this->post_id ),
 				'posts_per_page' => -1,
 				'post_status'    => 'publish',
 				'orderby'        => 'date',
@@ -113,7 +111,7 @@ class LiveBlogging_LiveBlogPost
 		);
 		while ( $q->have_posts() ) {
 			$q->next_post();
-			$entries = new LiveBlogging_LiveBlogEntry( $q->post->ID );
+			$entries[] = new LiveBlogging_LiveBlogEntry( $q->post );
 		}
 		return $entries;
 	}

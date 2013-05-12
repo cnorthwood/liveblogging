@@ -29,6 +29,3 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 require( 'LiveBlogging.php' );
 LiveBlogging::get_instance()->init();
-
-// Redirect new posts to the new post page
-add_filter( 'redirect_post_location', 'live_blogging_redirect', 10, 2 );

@@ -28,17 +28,21 @@ class LiveBlogging_Admin_MetaBox_Select extends LiveBlogging_Admin_MetaBox
 			'liveblog_entry',
 			'side'
 		);
-		add_action( 'save_liveblog_entry', array( $this, 'handle_save' ) );
+		add_action( 'save_post', array( $this, 'handle_save' ) );
 	}
 
 	public function render() {
 		wp_nonce_field( 'live_blogging_entry_meta', 'live_blogging_entry_nonce' );
-		$liveblogs = array_merge(
-			$this->get_active_liveblogs( 'post' ),
-			$this->get_active_liveblogs( 'page' ),
-			LiveBlogging_LiveBlogPost::get_liveblogs_for_current_post()
-		);
-
+		$liveblogs = array();
+		foreach ( $this->get_active_liveblogs( 'post' ) as $post_id => $name ) {
+			$liveblogs[$post_id] = $name;
+		}
+		foreach ( $this->get_active_liveblogs( 'page' ) as $post_id => $name ) {
+			$liveblogs[$post_id] = $name;
+		}
+		foreach ( LiveBlogging_LiveBlogPost::get_liveblogs_for_current_post() as $post_id => $name ) {
+			$liveblogs[$post_id] = $name;
+		}
 		if ( count( $liveblogs ) == 0 ) {
 			echo '<p>' . __( 'There are no currently active live blogs.', 'live-blogging' ) . '</p>';
 		} else {
@@ -52,7 +56,7 @@ class LiveBlogging_Admin_MetaBox_Select extends LiveBlogging_Admin_MetaBox
 		<label for="live_blogging_entry_post"><?php _e( 'Select live blog', 'live-blogging' ); ?></label><br/>
 		<select id="live_blogging_entry_post" name="live_blogging_entry_post" onchange="live_blogging_update_chatbox()">
 			<?php foreach ( $liveblogs as $liveblog_id => $liveblog_name ) : ?>
-				<option value="<?php echo esc_html( $liveblog_id ); ?>" <?php selected( $liveblog_id, $active_id ); ?>>
+				<option value="<?php echo esc_attr( $liveblog_id ); ?>" <?php selected( $liveblog_id, $active_id ); ?>>
 					<?php echo esc_html( $liveblog_name ); ?>
 				</option>
 			<?php endforeach; ?>
@@ -80,7 +84,7 @@ class LiveBlogging_Admin_MetaBox_Select extends LiveBlogging_Admin_MetaBox
 		// Get all active live blogs
 		while ( $query->have_posts() ) {
 			$query->next_post();
-			$liveblogs[$query->post->ID] = esc_attr( $query->post->post_title );
+			$liveblogs[strval( $query->post->ID )] = esc_attr( $query->post->post_title );
 		}
 		return $liveblogs;
 	}
@@ -111,11 +115,15 @@ class LiveBlogging_Admin_MetaBox_Select extends LiveBlogging_Admin_MetaBox
 	}
 
 	protected function okay_to_save( $post_id, $nonce_key ) {
-		if ( ! isset( $_POST['live_blogging_entry_post'] ) ) {
-			wp_delete_post( $post_id, true );
-			wp_die( '<p>' . __( 'There are no currently active live blogs.', 'live-blogging' ) . '</p>' );
+		if ( ! parent::okay_to_save( $post_id, $nonce_key ) ) {
+			return false;
+		} else {
+			if ( ! isset( $_POST['live_blogging_entry_post'] ) ) {
+				wp_delete_post( $post_id, true );
+				wp_die( '<p>' . __( 'There are no currently active live blogs.', 'live-blogging' ) . '</p>' );
+			}
+			return true;
 		}
-		return parent::okay_to_save( $post_id, $nonce_key );
 	}
 
 }

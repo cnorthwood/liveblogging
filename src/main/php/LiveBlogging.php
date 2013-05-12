@@ -116,6 +116,7 @@ class LiveBlogging
 		add_filter( 'the_title', array( 'LiveBlogging_LiveBlog', 'render_title' ), 10, 2 );
 		add_filter( 'wp_insert_post_data', array( 'LiveBlogging_LiveBlogPost', 'mark_parent_post_as_edited' ), 10, 1 );
 		add_filter( 'wp_insert_post_data', array( 'LiveBlogging_LiveBlogEntry', 'save_uploaded_files' ), 10, 2 );
+		add_shortcode( 'liveblog', array( 'LiveBlogging_LiveBlogPost', 'process_shortcode' ) );
 	}
 
 	public function plugin_init() {
@@ -181,7 +182,7 @@ class LiveBlogging
 	 * The Live Blogging taxonomy allows us to associate live blogs with posts
 	 */
 	private function register_taxonomy() {
-		register_taxonomy( 'liveblog', null, array( 'public' => false ) );
+		register_taxonomy( 'liveblog', 'liveblog_entry', array( 'public' => false ) );
 	}
 
 	private function load_language_resources() {

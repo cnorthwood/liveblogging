@@ -28,7 +28,7 @@ class LiveBlogging_Setting_PostStyle extends LiveBlogging_Setting
 	}
 
 	public static function render_admin_options() { ?>
-		<textarea name="<?php echo esc_attr( self::$setting_name ); ?>" cols="60" rows="8"><?php echo esc_html( get_option( 'liveblogging_style' ) ); ?></textarea>
+		<textarea name="<?php echo esc_attr( self::$setting_name ); ?>" cols="60" rows="8"><?php echo esc_html( self::get() ); ?></textarea>
 	<?php
 	}
 

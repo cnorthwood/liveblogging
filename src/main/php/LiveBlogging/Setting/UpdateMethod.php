@@ -36,8 +36,17 @@ class LiveBlogging_Setting_UpdateMethod extends LiveBlogging_Setting
 		}
 	}
 
+	public static function get() {
+		$value = parent::get();
+		if ( empty( $value ) ) {
+			update_option( self::$setting_name, self::$default_value );
+		}
+		return $value;
+	}
+
 	public static function is_enabled() {
-		return ! self::is( 'disabled' );
+		$value = self::get();
+		return ! empty( $value ) && $value !== 'disabled';
 	}
 
 	public static function is_ajax() {
