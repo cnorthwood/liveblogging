@@ -56,8 +56,7 @@ class LiveBlogging_Admin_MetaBox_Enable extends LiveBlogging_Admin_MetaBox
 	}
 
 	public function handle_save( $post_id ) {
-		if ( $this->okay_to_save( $post_id, 'post' ) )
-		{
+		if ( $this->okay_to_save( $post_id, 'post' ) ) {
 			$this->mark_post_as_liveblog( $post_id, $this->body_contains_shortcode() );
 			$this->mark_post_as_active_liveblog( $post_id, $this->active_checkbox_enabled() );
 		}
@@ -77,7 +76,6 @@ class LiveBlogging_Admin_MetaBox_Enable extends LiveBlogging_Admin_MetaBox
 	 * @param $flag boolean indicates whether or not this is a liveblog
 	 */
 	private function mark_post_as_liveblog( $post_id, $flag ) {
-
 		update_post_meta( $post_id, '_liveblog', $flag ? '1' : '0' );
 	}
 

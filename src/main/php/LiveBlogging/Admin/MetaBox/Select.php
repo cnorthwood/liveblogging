@@ -28,7 +28,7 @@ class LiveBlogging_Admin_MetaBox_Select extends LiveBlogging_Admin_MetaBox
 			'liveblog_entry',
 			'side'
 		);
-		add_action( 'save_post', array( $this, 'handle_save' ) );
+		add_action( 'save_liveblog_entry', array( $this, 'handle_save' ) );
 	}
 
 	public function render() {

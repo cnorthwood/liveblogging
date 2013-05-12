@@ -32,12 +32,12 @@ abstract class LiveBlogging_Admin_MetaBox {
 	 * @return bool
 	 */
 	protected function okay_to_save( $post_id, $nonce_key ) {
-		return check_admin_referer( 'live_blogging_' . $nonce_key . '_meta', 'live_blogging_' . $nonce_key . '_nonce' )
-			&& ! $this->doing_autosave()
+		return ! $this->doing_autosave( $nonce_key )
+			&& check_admin_referer( 'live_blogging_' . $nonce_key . '_meta', 'live_blogging_' . $nonce_key . '_nonce' )
 			&& current_user_can( 'edit_post', $post_id );
 	}
 
-	protected function doing_autosave() {
-		return ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! isset( $_POST['live_blogging_post_nonce'] );
+	protected function doing_autosave( $nonce_key ) {
+		return ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! isset( $_POST['live_blogging_' . $nonce_key . '_nonce'] );
 	}
 }
