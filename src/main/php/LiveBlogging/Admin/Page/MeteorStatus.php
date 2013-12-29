@@ -37,10 +37,10 @@ class LiveBlogging_Admin_Page_MeteorStatus
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'Access Denied', 'live-blogging' ) );
 		} else { ?>
-		<div class="wrap">
-			<h2><?php _e( 'Meteor Status', 'live-blogging' ); ?></h2>
-    		<pre><?php LiveBlogging::get_instance()->updater->fetch_stats(); ?></pre>
-		</div><?php
+			<div class="wrap">
+				<h2><?php _e( 'Meteor Status', 'live-blogging' ); ?></h2>
+				<pre><?php LiveBlogging::get_instance()->updater->fetch_stats(); ?></pre>
+			</div><?php
 		}
 	}
 

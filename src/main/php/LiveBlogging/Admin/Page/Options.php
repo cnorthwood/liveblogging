@@ -31,80 +31,80 @@ class LiveBlogging_Admin_Page_Options
 		);
 	}
 
-	public function render()
-{
-?>
-	<div class="wrap">
-		<h2><?php _e( 'Live Blogging Options', 'live-blogging' ); ?></h2>
+	public function render() { ?>
+		<div class="wrap">
+			<h2><?php _e( 'Live Blogging Options', 'live-blogging' ); ?></h2>
 
-		<?php if ( LiveBlogging_Legacy::exists() ) : ?>
-			<?php $this->render_migration_prompt(); ?>
-		<?php endif; ?>
+			<?php if ( LiveBlogging_Legacy::exists() ) : ?>
+				<?php $this->render_migration_prompt(); ?>
+			<?php endif; ?>
 
 
-		<form method="post" action="options.php">
-			<?php settings_fields( 'live-blogging' ); ?>
-			<h3><?php _e( 'Automatic Updating', 'live-blogging' ); ?></h3>
-			<table class="form-table">
-				<?php $this->render_setting( 'LiveBlogging_Setting_UpdateMethod' ); ?>
-				<?php $this->render_setting( 'LiveBlogging_Setting_Comments' ); ?>
-				<?php $this->render_setting( 'LiveBlogging_Setting_TimedUpdatedFrequency' ); ?>
-			</table>
+			<form method="post" action="options.php">
+				<?php settings_fields( 'live-blogging' ); ?>
+				<h3><?php _e( 'Automatic Updating', 'live-blogging' ); ?></h3>
+				<table class="form-table">
+					<?php $this->render_setting( 'LiveBlogging_Setting_UpdateMethod' ); ?>
+					<?php $this->render_setting( 'LiveBlogging_Setting_Comments' ); ?>
+					<?php $this->render_setting( 'LiveBlogging_Setting_TimedUpdatedFrequency' ); ?>
+				</table>
 
-			<h3><?php _e( 'Posting to Twitter', 'live-blogging' ); ?></h3>
-			<table class="form-table">
-				<?php if ( function_exists( 'curl_init' ) ) : ?>
-					<?php LiveBlogging::get_instance()->twitter->render_admin(); ?>
-				<?php else : ?>
-					<tr>
-						<td colspan="2">
-							<strong><em>
-								<?php _e( 'Twitter functionality disabled due to missing PHP CURL module', 'live-blogging' ); ?>
-							</em></strong>
-						</td>
-					</tr>
-				<?php endif; ?>
-				<?php if ( LiveBlogging::get_instance()->twitter->twitter_authorised() ) : ?>
-					<?php $this->render_setting( 'LiveBlogging_Setting_Twitter' ); ?>
-					<?php $this->render_setting( 'LiveBlogging_Setting_TwitterComments' ); ?>
-				<?php endif; ?>
-			</table>
+				<h3><?php _e( 'Posting to Twitter', 'live-blogging' ); ?></h3>
+				<table class="form-table">
+					<?php if ( function_exists( 'curl_init' ) ) : ?>
+						<?php LiveBlogging::get_instance()->twitter->render_admin(); ?>
+					<?php else : ?>
+						<tr>
+							<td colspan="2">
+								<strong><em>
+									<?php _e( 'Twitter functionality disabled due to missing PHP CURL module', 'live-blogging' ); ?>
+								</em></strong>
+							</td>
+						</tr>
+					<?php endif; ?>
+					<?php if ( LiveBlogging::get_instance()->twitter->twitter_authorised() ) : ?>
+						<?php $this->render_setting( 'LiveBlogging_Setting_Twitter' ); ?>
+						<?php $this->render_setting( 'LiveBlogging_Setting_TwitterComments' ); ?>
+					<?php endif; ?>
+				</table>
 
-			<h3><?php _e( 'Live Blog Style', 'live-blogging' ); ?></h3>
-			<table class="form-table">
-				<?php $this->render_setting( 'LiveBlogging_Setting_UpdateStyle' ); ?>
-				<?php $this->render_setting( 'LiveBlogging_Setting_DateStyle' ); ?>
-				<?php $this->render_setting( 'LiveBlogging_Setting_PostStyle' ); ?>
-			</table>
+				<h3><?php _e( 'Live Blog Style', 'live-blogging' ); ?></h3>
+				<table class="form-table">
+					<?php $this->render_setting( 'LiveBlogging_Setting_UpdateStyle' ); ?>
+					<?php $this->render_setting( 'LiveBlogging_Setting_DateStyle' ); ?>
+					<?php $this->render_setting( 'LiveBlogging_Setting_PostStyle' ); ?>
+				</table>
 
-			<h3><?php _e( 'Meteor Configuration', 'live-blogging' ); ?></h3>
-			<table class="form-table">
-				<?php $this->render_setting( 'LiveBlogging_Setting_MeteorSubscriber' ); ?>
-				<?php $this->render_setting( 'LiveBlogging_Setting_MeteorController' ); ?>
-				<?php $this->render_setting( 'LiveBlogging_Setting_MeteorControllerPort' ); ?>
-				<?php $this->render_setting( 'LiveBlogging_Setting_MeteorNamespace' ); ?>
-			</table>
+				<h3><?php _e( 'Meteor Configuration', 'live-blogging' ); ?></h3>
+				<table class="form-table">
+					<?php $this->render_setting( 'LiveBlogging_Setting_MeteorSubscriber' ); ?>
+					<?php $this->render_setting( 'LiveBlogging_Setting_MeteorController' ); ?>
+					<?php $this->render_setting( 'LiveBlogging_Setting_MeteorControllerPort' ); ?>
+					<?php $this->render_setting( 'LiveBlogging_Setting_MeteorNamespace' ); ?>
+				</table>
 
-			<h3><?php _e( 'Advanced Settings', 'live-blogging' ); ?></h3>
-			<table class="form-table">
-				<?php $this->render_setting( 'LiveBlogging_Setting_ContentHooks' ); ?>
-			</table>
+				<h3><?php _e( 'Advanced Settings', 'live-blogging' ); ?></h3>
+				<table class="form-table">
+					<?php $this->render_setting( 'LiveBlogging_Setting_ContentHooks' ); ?>
+				</table>
 
-			<p class="submit">
-				<input type="submit" class="button-primary" value="<?php _e( 'Save Changes' ); ?>" />
-			</p>
+				<p class="submit">
+					<input type="submit" class="button-primary" value="<?php _e( 'Save Changes' ); ?>" />
+				</p>
 
-		</form>
-	</div><?php
+			</form>
+		</div>
+		<?php
 	}
 
 	private function render_migration_prompt() { ?>
-	<div class="updated">
-		<p>
-			<?php _e( 'It appears you have live blogs created in version 1 of the plugin.', 'live-blogging' ); ?>
-			<a href="tools.php?page=live-blogging-upgrade"><?php _e( 'Click here to update your legacy live blogs.', 'live-blogging' ); ?></a>
-		</p>
-	</div><?php
+		<div class="updated">
+			<p>
+				<?php _e( 'It appears you have live blogs created in version 1 of the plugin.', 'live-blogging' ); ?>
+				<a href="tools.php?page=live-blogging-upgrade"><?php _e( 'Click here to update your legacy live blogs.', 'live-blogging' ); ?></a>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**

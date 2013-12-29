@@ -24,8 +24,7 @@ class LiveBlogging_Setting_UpdateMethod extends LiveBlogging_Setting
 	protected static $default_value = 'poll';
 
 	public function sanitise_setting( $input ) {
-		switch ( $input )
-		{
+		switch ( $input ) {
 			case 'poll':
 			case 'meteor':
 			case 'timed':

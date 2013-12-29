@@ -21,8 +21,7 @@
 class LiveBlogging_Admin_Page_Migrate
 {
 	public function register_page() {
-		if ( LiveBlogging_Legacy::exists() )
-		{
+		if ( LiveBlogging_Legacy::exists() ) {
 			add_submenu_page(
 				'tools.php',
 				__( 'Migrate Live Blogging', 'live-blogging' ),
@@ -38,14 +37,14 @@ class LiveBlogging_Admin_Page_Migrate
 		<div class="wrap">
 			<?php $this->render_header(); ?>
 			<?php
-			if ( isset( $_POST['live_blogging_start_migration'] ) ) :
-				check_admin_referer( 'live-blogging-upgrade' );
-				LiveBlogging_Legacy::migrate();
-			elseif ( LiveBlogging_Legacy::exists() ) :
-				$this->render_start_migration_message();
-			else :
-				$this->render_no_legacy_message();
-			endif;
+		if ( isset( $_POST['live_blogging_start_migration'] ) ) :
+			check_admin_referer( 'live-blogging-upgrade' );
+			LiveBlogging_Legacy::migrate();
+		elseif ( LiveBlogging_Legacy::exists() ) :
+			$this->render_start_migration_message();
+		else :
+			$this->render_no_legacy_message();
+		endif;
 			?>
 		</div>
 	<?php

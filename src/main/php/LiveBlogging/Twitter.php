@@ -210,7 +210,8 @@ class LiveBlogging_Twitter
 
 	public function render_admin() {
 		$authorise_url = $this->get_twitter_authorisation_url();
-	?><tr valign="top">
+		?>
+		<tr valign="top">
 			<th scope="row"><?php _e( 'Connect with Twitter', 'live-blogging' ); ?></th>
 			<td>
 				<?php if ( $this->twitter_authorised() ) : ?>
@@ -228,7 +229,8 @@ class LiveBlogging_Twitter
 					<?php _e( 'Unable to connect to Twitter at this time.', 'live-blogging' ); ?>
 				<?php endif; ?>
 			</td>
-		</tr><?php
+		</tr>
+	<?php
 	}
 
 	/**

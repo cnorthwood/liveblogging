@@ -38,14 +38,14 @@ class LiveBlogging_Admin_Page_EditList {
 
 	public function render_custom_column( $column_name, $post_ID ) {
 		switch ( $column_name ) {
-		case 'liveblog':
-			$blog = LiveBlogging_LiveBlogEntry::live_blogs_for_entry_id( $post_ID );
-			if ( ! empty( $blog ) ) : ?>
-				<a href="post.php?post=<?php echo esc_attr( $blog->post_id() ); ?>&amp;action=edit">
-					<?php echo esc_html( $blog->name() ); ?>
-				</a><?php
-			endif;
-			break;
+			case 'liveblog':
+				$blog = LiveBlogging_LiveBlogEntry::live_blogs_for_entry_id( $post_ID );
+				if ( ! empty( $blog ) ) : ?>
+					<a href="post.php?post=<?php echo esc_attr( $blog->post_id() ); ?>&amp;action=edit">
+						<?php echo esc_html( $blog->name() ); ?>
+					</a><?php
+				endif;
+				break;
 		}
 	}
 

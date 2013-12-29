@@ -82,19 +82,19 @@ class LiveBlogging_Setting_ContentHooks extends LiveBlogging_Setting
 				$unhook = array_map( 'trim', $unhook );
 				$count  = count( $unhook );
 				switch ( $count ) {
-				case 2:
-					if ( method_exists( $GLOBALS[$unhook[0]], $unhook[1] ) ) {
-						remove_filter( 'the_content', array( $GLOBALS[$unhook[0]], $unhook[1] ) );
-					}
-					break;
+					case 2:
+						if ( method_exists( $GLOBALS[$unhook[0]], $unhook[1] ) ) {
+							remove_filter( 'the_content', array( $GLOBALS[$unhook[0]], $unhook[1] ) );
+						}
+						break;
 
-				case 1:
-				default:
-					if ( function_exists( $unhook[0] ) ) {
-						remove_filter( 'the_content', $unhook[0] );
+					case 1:
+					default:
+						if ( function_exists( $unhook[0] ) ) {
+							remove_filter( 'the_content', $unhook[0] );
+						}
+						break;
 					}
-					break;
-				}
 			}
 		}
 	}
@@ -107,19 +107,19 @@ class LiveBlogging_Setting_ContentHooks extends LiveBlogging_Setting
 				$unhook = array_map( 'trim', $unhook );
 				$count  = count( $unhook );
 				switch ( $count ) {
-				case 2:
-					if ( method_exists( $GLOBALS[$unhook[0]], $unhook[1] ) ) {
-						add_filter( 'the_content', array( $GLOBALS[$unhook[0]], $unhook[1] ) );
-					}
-					break;
+					case 2:
+						if ( method_exists( $GLOBALS[$unhook[0]], $unhook[1] ) ) {
+							add_filter( 'the_content', array( $GLOBALS[$unhook[0]], $unhook[1] ) );
+						}
+						break;
 
-				case 1:
-				default:
-					if ( function_exists( $unhook[0] ) ) {
-						add_filter( 'the_content', $unhook[0] );
+					case 1:
+					default:
+						if ( function_exists( $unhook[0] ) ) {
+							add_filter( 'the_content', $unhook[0] );
+						}
+						break;
 					}
-					break;
-				}
 			}
 		}
 	}
