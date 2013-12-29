@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="live-blogging" default="dist">
+
+    <target name="test">
+        <phpunit haltonfailure="true" haltonerror="true" printsummary="true">
+            <batchtest>
+                <fileset dir="src/test/php">
+                    <include name="**/*Test.php"/>
+                </fileset>
+            </batchtest>
+        </phpunit>
+        <phpcodesniffer haltonerror="true" standard="vendor/wordpress-coding-standards/wordpress-coding-standards/WordPress/ruleset.xml" file="src/main/php" allowedFileExtensions="php"/>
+    </target>
+
+    <target name="dist" depends="test" />
+</project>
