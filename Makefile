@@ -22,7 +22,7 @@ clean:
 test: phpunit jstestdriver
 
 libs/phpunit.phar:
-	(cd libs && wget http://pear.phpunit.de/get/phpunit.phar)
+	(cd libs && wget https://phar.phpunit.de/phpunit.phar)
 	chmod +x libs/phpunit.phar
 
 phpunit: libs/phpunit.phar
